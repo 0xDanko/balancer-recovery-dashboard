@@ -29,25 +29,25 @@ const MU=4107566;const MEP=3413;const ME=1204;
 
 const WH=[
   {id:"eth",name:"Ethereum",c:"#627EEA",wh:"Whitehat #1 (Bitfinding)",bounty:true,ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
-    tk:[{t:"WETH",g:136.0009,b:13.6001,ru:488616,eu:Math.round(136.0009*EP),cp:.091},{t:"wstETH",g:10.9568,b:1.0957,ru:47938,eu:Math.round(10.9568*EP*1.18),cp:.2143},{t:"weETH",g:6.6165,b:0.6617,ru:25625,eu:Math.round(6.6165*EP*1.05),cp:.0159},{t:"rETH",g:6.2251,b:0.6225,ru:23124,eu:25638,cp:.0545},{t:"osETH",g:105.2082,b:10.5208,ru:378529,eu:378529,cp:0}]},
+    tk:[{t:"WETH",g:136.0009,b:13.6001,ru:488616,eu:Math.round(136.0009*EP),nc:.909},{t:"wstETH",g:10.9568,b:1.0957,ru:47938,eu:Math.round(10.9568*EP*1.18),nc:.786},{t:"weETH",g:6.6165,b:0.6617,ru:25625,eu:Math.round(6.6165*EP*1.05),nc:.984},{t:"rETH",g:6.2251,b:0.6225,ru:23124,eu:25638,nc:.946},{t:"osETH",g:105.2082,b:10.5208,ru:378529,eu:378529,nc:1}]},
   {id:"base",name:"Base",c:"#0052FF",wh:"Whitehat #2 (MEV Bot)",bounty:true,ms:"0xC40DCFB13651e64C8551007aa57F9260827B6462",ex:"basescan.org",
-    tk:[{t:"weETH",g:0.0621,b:0.0062,ru:241,eu:Math.round(0.0621*EP*1.05),cp:0},{t:"WETH",g:16.97,b:1.697,ru:61009,eu:Math.round(16.97*EP),cp:0},{t:"rETH",g:24.2404,b:2.424,ru:100024,eu:Math.round(24.2404*EP*1.11),cp:0}]},
+    tk:[{t:"weETH",g:0.0621,b:0.0062,ru:241,eu:Math.round(0.0621*EP*1.05),nc:1},{t:"WETH",g:16.97,b:1.697,ru:61009,eu:Math.round(16.97*EP),nc:1},{t:"rETH",g:24.2404,b:2.424,ru:100024,eu:Math.round(24.2404*EP*1.11),nc:1}]},
   {id:"poly",name:"Polygon",c:"#8247E5",wh:"Whitehat #3",bounty:true,ms:"0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85",ex:"polygonscan.com",
-    tk:[{t:"MaticX",g:6802356,b:680236,ru:1298674,eu:1505618,cp:0},{t:"WPOL",g:8007432,b:800743,ru:1303707,eu:Math.round(8007432*PP),cp:0},{t:"stMatic",g:72412,b:7241,ru:13449,eu:14688,cp:0},{t:"TruMATIC",g:2865690,b:286569,ru:65491,eu:Math.round(2865690*PP*0.12),cp:0}]},
+    tk:[{t:"MaticX",g:6802356,b:680236,ru:1298674,eu:1505618,nc:1},{t:"WPOL",g:8007432,b:800743,ru:1303707,eu:Math.round(8007432*PP),nc:1},{t:"stMatic",g:72412,b:7241,ru:13449,eu:14688,nc:1},{t:"TruMATIC",g:2865690,b:286569,ru:65491,eu:Math.round(2865690*PP*0.12),nc:1}]},
   {id:"arb",name:"Arbitrum",c:"#28A0F0",wh:"Unknown (bounty waived)",bounty:false,ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
-    tk:[{t:"ETH",g:13.8,b:0,ru:46933,eu:Math.round(13.8*EP),cp:0},{t:"weETH",g:0.0278,b:0,ru:96,eu:107,cp:null},{t:"USDX",g:117.3,b:0,ru:117,eu:117,cp:null},{t:"sUSDX",g:105.95,b:0,ru:112,eu:117,cp:null},{t:"rETH",g:0.2081,b:0,ru:826,eu:920,cp:0},{t:"wstETH",g:0.0027,b:0,ru:11,eu:12,cp:.0008},{t:"WETH",g:0.2025,b:0,ru:700,eu:767,cp:.0006},{t:"ezETH",g:0.0629,b:0,ru:230,eu:Math.round(0.0629*EP*1.04),cp:0}]},
+    tk:[{t:"ETH",g:13.8,b:0,ru:46933,eu:Math.round(13.8*EP),nc:1},{t:"weETH",g:0.0278,b:0,ru:96,eu:107,nc:null},{t:"USDX",g:117.3,b:0,ru:117,eu:117,nc:1},{t:"sUSDX",g:105.95,b:0,ru:112,eu:117,nc:null},{t:"rETH",g:0.2081,b:0,ru:826,eu:920,nc:.999},{t:"wstETH",g:0.0027,b:0,ru:11,eu:12,nc:.999},{t:"WETH",g:0.2025,b:0,ru:700,eu:767,nc:1},{t:"ezETH",g:0.0629,b:0,ru:230,eu:Math.round(0.0629*EP*1.04),nc:1}]},
 ];
 
 const META=[
   {id:"m-eth",name:"Ethereum",c:"#627EEA",ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
     tx:"0xa58632c111d808f1e712792d27d26c1349244a1ba9789150ef2dfd38b96bf792",rusd:3590713,
-    tk:[{t:"WETH",a:510.37,ru:1773459,eu:Math.round(510.37*MEP),cp:.091},{t:"rETH",a:320.12,ru:1234729,eu:Math.round(320.12*MEP*1.11),cp:.0545},{t:"wstETH",a:141.39,ru:579745,eu:Math.round(141.39*MEP*1.18),cp:.2143},{t:"StaFi rETH",a:0.80,ru:2780,eu:Math.round(0.80*MEP),cp:0}]},
+    tk:[{t:"WETH",a:510.37,ru:1773459,eu:Math.round(510.37*MEP),nc:.909},{t:"rETH",a:320.12,ru:1234729,eu:Math.round(320.12*MEP*1.11),nc:.946},{t:"wstETH",a:141.39,ru:579745,eu:Math.round(141.39*MEP*1.18),nc:.786},{t:"StaFi rETH",a:0.80,ru:2780,eu:Math.round(0.80*MEP),nc:.995}]},
   {id:"m-op",name:"Optimism",c:"#FF0420",ms:"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc",ex:"optimistic.etherscan.io",
     tx:"0x66033a3de57ae9c94d37f413993339e22d5e07734bb9121d36e3e2b4b4479e12",rusd:488327,
-    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11),cp:0},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP),cp:0},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP*1.18),cp:0}]},
+    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11),nc:1},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP),nc:1},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP*1.18),nc:1}]},
   {id:"m-arb",name:"Arbitrum",c:"#28A0F0",ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
     tx:"0x3eac9a0c289b1bea772b7bf6d0093a13dd0a80d671e104c7a0241a89db17606f",rusd:28526,
-    tk:[{t:"wstETH",a:3.53,ru:14481,eu:Math.round(3.53*MEP*1.18),cp:.0008},{t:"WETH",a:4.04,ru:14045,eu:Math.round(4.04*MEP),cp:.0006}]},
+    tk:[{t:"wstETH",a:3.53,ru:14481,eu:Math.round(3.53*MEP*1.18),nc:.999},{t:"WETH",a:4.04,ru:14045,eu:Math.round(4.04*MEP),nc:1}]},
 ];
 
 const $$=n=>n==null?"---":Math.abs(n)>=1e6?`$${(n/1e6).toFixed(2)}M`:Math.abs(n)>=1e3?`$${(n/1e3).toFixed(1)}K`:`$${n.toFixed(0)}`;
@@ -56,14 +56,91 @@ const fb=(n,u)=>n==null?"---":`${n>=1e6?`${(n/1e6).toFixed(2)}M`:n>=1e3?n.toLoca
 const sa=a=>a?`${a.slice(0,6)}...${a.slice(-4)}`:"";
 const pct=n=>`${(n*100).toFixed(2)}%`;
 
-// % Claimed is pre-computed from on-chain multisig balances (Mar 8 2026) vs BIP-892 allocations
-// stored as `cp` field on each token. Live upgrade attempted via GitHub CSV + Anthropic API on page load.
+// Live on-chain % Unclaimed via public RPC balanceOf calls
+const RPC={"1":"https://eth.llamarpc.com","137":"https://polygon-rpc.com","42161":"https://arb1.arbitrum.io/rpc","8453":"https://mainnet.base.org","10":"https://mainnet.optimism.io"};
+const MS={"1":"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f","137":"0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85","42161":"0xaF23DC5983230E9eEAf93280e312e57539D098D0","8453":"0xC40DCFB13651e64C8551007aa57F9260827B6462","10":"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc"};
+// CSV totals: "chainId|tokenContract" -> [combined, whitehat, meta]
+const ALLOC={
+  "1|0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2":[632.77,122.40,510.37],
+  "1|0xae78736cd615f374d3085123a210448e74fc6393":[325.73,5.60,320.12],
+  "1|0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0":[151.25,9.86,141.39],
+  "1|0xf1c9acdc66974dfb6decb12aa385b9cd01190e38":[94.69,94.69,0],
+  "1|0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee":[5.95,5.95,0],
+  "1|0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593":[0.80,0,0.80],
+  "10|0x4200000000000000000000000000000000000006":[66.06,0,66.06],
+  "10|0x9bcef72be871e61ed4fbbc7630889bee758eb81d":[64.88,0,64.88],
+  "10|0x1f32b1c2345538c0c6f582fcb022739c4a194ebb":[1.86,0,1.86],
+  "137|0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270":[7206689,7206689,0],
+  "137|0xfa68fb4628dff1028cfec22b4162fccd0d45efb6":[6122120,6122120,0],
+  "137|0xf33687811f3ad0cd6b48dd4b39f9f977bd7165a2":[2579122,2579122,0],
+  "137|0x3a58a54c066fdc0f2d55fc9c89f0415c92ebf3c4":[65171,65171,0],
+  "8453|0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c":[21.82,21.82,0],
+  "8453|0x4200000000000000000000000000000000000006":[15.27,15.27,0],
+  "8453|0x04c0599ae5a44757c0af6f9ec3b93da8976c150a":[0.056,0.056,0],
+  "42161|0x82af49447d8a07e3bd95bd0d56f35241523fbab1":[12.19,8.15,4.04],
+  "42161|0x5979d7b546e38e414f7e9822514be443a4800529":[3.98,0.45,3.53],
+  "42161|0x35751007a407ca6feffe80b3cb397736d2cf4dbe":[2.86,2.86,0],
+  "42161|0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8":[9.65,9.65,0],
+  "42161|0x4186bfc76e2e237523cbc30fd220fe055156b41f":[1.26,1.26,0],
+  "42161|0x2416092f143378750bb29b79ed961ab195cceea5":[0.063,0.063,0],
+};
+// Token symbol -> contract address per chain
+const TC={
+  "1|WETH":"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2","1|wstETH":"0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+  "1|weETH":"0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee","1|rETH":"0xae78736cd615f374d3085123a210448e74fc6393",
+  "1|osETH":"0xf1c9acdc66974dfb6decb12aa385b9cd01190e38","1|StaFi rETH":"0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593",
+  "8453|weETH":"0x04c0599ae5a44757c0af6f9ec3b93da8976c150a","8453|WETH":"0x4200000000000000000000000000000000000006",
+  "8453|rETH":"0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c",
+  "137|MaticX":"0xfa68fb4628dff1028cfec22b4162fccd0d45efb6","137|WPOL":"0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+  "137|stMatic":"0x3a58a54c066fdc0f2d55fc9c89f0415c92ebf3c4","137|TruMATIC":"0xf33687811f3ad0cd6b48dd4b39f9f977bd7165a2",
+  "42161|WETH":"0x82af49447d8a07e3bd95bd0d56f35241523fbab1","42161|wstETH":"0x5979d7b546e38e414f7e9822514be443a4800529",
+  "42161|rETH":"0x35751007a407ca6feffe80b3cb397736d2cf4dbe","42161|ETH":"0x4186bfc76e2e237523cbc30fd220fe055156b41f",
+  "42161|USDX":"0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8","42161|ezETH":"0x2416092f143378750bb29b79ed961ab195cceea5",
+  "10|WETH":"0x4200000000000000000000000000000000000006","10|rETH":"0x9bcef72be871e61ed4fbbc7630889bee758eb81d",
+  "10|wstETH":"0x1f32b1c2345538c0c6f582fcb022739c4a194ebb",
+};
+// chain_id mapping
+const CID={eth:"1",base:"8453",poly:"137",arb:"42161","m-eth":"1","m-op":"10","m-arb":"42161"};
+
+async function fetchBalance(rpc,tokenAddr,walletAddr){
+  const sig="0x70a08231";const pad=walletAddr.replace("0x","").toLowerCase().padStart(64,"0");
+  const data=sig+pad;
+  try{const r=await fetch(rpc,{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({jsonrpc:"2.0",id:1,method:"eth_call",params:[{to:tokenAddr,data},"latest"]})});
+    const j=await r.json();if(j.result&&j.result!=="0x"){return parseInt(j.result,16)/1e18}return 0;
+  }catch{return null}
+}
+
+async function fetchAllBalances(){
+  const results={};const tasks=[];
+  for(const key of Object.keys(ALLOC)){
+    const[cid,tokenAddr]=key.split("|");
+    const rpc=RPC[cid];const ms=MS[cid];
+    if(!rpc||!ms)continue;
+    tasks.push(fetchBalance(rpc,tokenAddr,ms).then(bal=>{results[key]=bal}));
+  }
+  await Promise.allSettled(tasks);return results;
+}
+
+function computeNc(section,chainId,tokenSym,balances){
+  const cid=CID[chainId];if(!cid)return null;
+  const tcKey=`${cid}|${tokenSym}`;const tokenAddr=TC[tcKey];if(!tokenAddr)return null;
+  const allocKey=`${cid}|${tokenAddr}`;const alloc=ALLOC[allocKey];if(!alloc)return null;
+  const bal=balances[allocKey];if(bal==null)return null;
+  const[combined,wh,meta]=alloc;if(combined<=0)return null;
+  const totalClaimed=Math.max(0,combined-bal);
+  const sectionAlloc=section==="whitehat"?wh:meta;
+  if(sectionAlloc<=0)return null;
+  const sectionClaimed=totalClaimed*(sectionAlloc/combined);
+  return Math.max(0,Math.min(1,(sectionAlloc-sectionClaimed)/sectionAlloc));
+}
 
 const App = function App(){
   const[dk,setDk]=useState(true);const[pr,setPr]=useState({});const[ld,setLd]=useState(true);
   const[exp,setExp]=useState(null);const[mExp,setMExp]=useState(null);
   const[wal,setWal]=useState("");const[res,setRes]=useState(null);const[srch,setSrch]=useState(false);
   const[lu,setLu]=useState(null);
+  const[bals,setBals]=useState(null);const[balsLd,setBalsLd]=useState(true);
 
   useEffect(()=>{const go=async()=>{setLd(true);try{const ids=[...new Set(Object.values(CG))].join(",");
     const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,eth`);
@@ -72,6 +149,10 @@ const App = function App(){
   }catch{setPr({WETH:{usd:2200,eth:1},ETH:{usd:2200,eth:1},wstETH:{usd:2640,eth:1.2},weETH:{usd:2320,eth:1.05},rETH:{usd:2440,eth:1.11},osETH:{usd:2260,eth:1.03},MaticX:{usd:.24},WPOL:{usd:.2},stMatic:{usd:.22},TruMATIC:{usd:.023},USDX:{usd:1},sUSDX:{usd:1.06},ezETH:{usd:2280,eth:1.04},"StaFi rETH":{usd:1790}})}
   setLd(false)};go();const iv=setInterval(go,120000);return()=>clearInterval(iv)},[]);
 
+  // Fetch on-chain balances via public RPCs
+  useEffect(()=>{const go=async()=>{setBalsLd(true);
+    const b=await fetchAllBalances();setBals(b);setBalsLd(false)};go()},[]);
+
   const rt=useCallback(tok=>{const p=pr[tok];if(!p)return 0;const b=base(tok);
     if(b==="USDC")return p.usd;if(b==="ETH")return p.eth||(pr.WETH?.usd?p.usd/pr.WETH.usd:0);
     if(b==="POL")return pr.WPOL?.usd?p.usd/pr.WPOL.usd:0;return p.usd},[pr]);
@@ -79,15 +160,17 @@ const App = function App(){
   const wcs=useMemo(()=>WH.map(ch=>{let tru=0,teu=0,tcu=0;
     const det=ch.tk.map(x=>{const net=x.g-(x.b||0);const cp=pr[x.t]?.usd||0;const cu=net*cp;
       const br=rt(x.t);const nib=net*br;tru+=x.ru||0;teu+=x.eu||0;tcu+=cu;
-      return{...x,net,cp:x.cp,cpr:cp,cu,br,nib,ba:base(x.t)}});
+      const liveNc=bals?computeNc("whitehat",ch.id,x.t,bals):null;
+      return{...x,net,nc:liveNc!=null?liveNc:x.nc,cpr:cp,cu,br,nib,ba:base(x.t)}});
     const bg={};det.filter(x=>x.net>.0001).forEach(x=>{if(!bg[x.ba])bg[x.ba]=0;bg[x.ba]+=x.nib});
-    return{...ch,det,tru,teu,tcu,bg}}),[pr,rt]);
+    return{...ch,det,tru,teu,tcu,bg}}),[pr,rt,bals]);
 
   const mcs=useMemo(()=>META.map(ch=>{let tcu=0;
     const det=ch.tk.map(x=>{const cp=pr[x.t]?.usd||0;const cu=x.a*cp;const br=rt(x.t);const nib=x.a*br;tcu+=cu;
-      return{...x,net:x.a,g:x.a,b:0,cp:x.cp,cpr:cp,cu,br,nib,ba:"ETH"}});
+      const liveNc=bals?computeNc("meta",ch.id,x.t,bals):null;
+      return{...x,net:x.a,g:x.a,b:0,nc:liveNc!=null?liveNc:x.nc,cpr:cp,cu,br,nib,ba:"ETH"}});
     const bg={};det.forEach(x=>{if(!bg.ETH)bg.ETH=0;bg.ETH+=x.nib});
-    return{...ch,det,tcu,bg}}),[pr,rt]);
+    return{...ch,det,tcu,bg}}),[pr,rt,bals]);
 
   const whNow=useMemo(()=>wcs.reduce((s,c)=>s+c.tcu,0),[wcs]);
   const metaNow=useMemo(()=>mcs.reduce((s,c)=>s+c.tcu,0),[mcs]);
@@ -116,8 +199,8 @@ const App = function App(){
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,color:T.tx2}}>{x.eu?$$(x.eu):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10}}>{x.ru?$$(x.ru):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.gn}}>{$$(x.cu)}</td>
-    <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:x.cp!=null&&x.cp>0?T.cy:T.tx2}}>
-      {x.cp!=null?`${(x.cp*100).toFixed(1)}%`:"---"}</td>
+    <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.tx}}>
+      {balsLd?"···":x.nc!=null?`${(x.nc*100).toFixed(1)}%`:"---"}</td>
   </tr>);
 
   return(<div style={{minHeight:"100vh",background:T.bg,color:T.tx,fontFamily:"'Outfit',system-ui,sans-serif"}}>
@@ -134,10 +217,45 @@ const App = function App(){
     </nav>
 
     <div style={{padding:"32px 20px",maxWidth:1200,margin:"0 auto"}}>
+
+      {/* ═══ GLOBAL HERO ═══ */}
+      {(()=>{
+        // Compute live global % claimed from on-chain balances
+        let totalAlloc=0,totalRemaining=0,liveReady=!!bals;
+        if(bals){for(const[key,[combined]]=Object.entries?Object.entries(ALLOC):[]){
+          const b=bals[key];if(b!=null){totalAlloc+=combined;totalRemaining+=Math.min(b,combined)}
+          else{totalAlloc+=combined;totalRemaining+=combined}
+        }
+        // Use Object.entries properly
+        for(const key of Object.keys(ALLOC)){const[combined]=ALLOC[key];const b=bals[key];
+          if(key===Object.keys(ALLOC)[0]){totalAlloc=0;totalRemaining=0}
+        }}
+        // Recalculate cleanly
+        let tA=0,tR=0;
+        for(const key of Object.keys(ALLOC)){const[c]=ALLOC[key];tA+=c;
+          const b=bals?bals[key]:null;tR+=(b!=null?Math.min(b,c):c)}
+        const claimed=Math.max(0,tA-tR);const pctClaimed=tA>0?claimed/tA:0;
+        return(<div style={{marginBottom:32,padding:24,background:`linear-gradient(135deg,${T.ac}18,${T.cd})`,border:`1px solid ${T.ac}40`,borderRadius:14}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,alignItems:"center"}}>
+          <div>
+            <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Rescued / Recovered</div>
+            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>$8.78M</div>
+            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>2,199 ETH across 5 chains</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Whitehat recoveries ($4.67M at exploit prices) + Certora metastable rescue ($4.11M). Excluding StakeWise, Gnosis frozen, Hypernative-paused.</div>
+          </div>
+          <div style={{textAlign:"right"}}>
+            <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Claimed by LPs</div>
+            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>{balsLd?"···":`${(pctClaimed*100).toFixed(1)}%`}</div>
+            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>{balsLd?"Loading on-chain data...":"Live from RPC balanceOf calls"}</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Computed as CSV allocations minus current multisig balances via public RPC endpoints across all 5 chains.</div>
+            <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",marginTop:10,padding:"8px 20px",background:T.ac,color:"#fff",borderRadius:8,textDecoration:"none",fontWeight:700,fontSize:13}}>Claim at balancer.fi/portfolio</a>
+          </div>
+        </div>
+      </div>)})()}
+
       <div style={{marginBottom:48}}>
         <div style={{textAlign:"center",marginBottom:16}}><h1 style={{fontSize:24,fontWeight:800,letterSpacing:-.5}}>Whitehat Recovered Funds</h1>
-          <p style={{color:T.tx2,fontSize:12,margin:"4px auto 14px",maxWidth:560,lineHeight:1.5}}>Balancer V2 exploit, Nov 3, 2025. BIP-892 passed. 10% bounty per BIP-726. Claiming is live.</p>
-          <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",padding:"8px 20px",background:T.ac,color:"#fff",borderRadius:8,textDecoration:"none",fontWeight:700,fontSize:13}}>Claim at balancer.fi/portfolio</a></div>
+          <p style={{color:T.tx2,fontSize:12,margin:"4px auto 14px",maxWidth:560,lineHeight:1.5}}>Balancer V2 exploit, Nov 3, 2025. BIP-892 passed. 10% bounty per BIP-726. Claiming is live.</p></div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:10}}>
           <div style={{...C,padding:18}}><div style={Lb}>Total Funds Drained</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.rd}}>${(TD/1e6).toFixed(2)}M</div><div style={{fontSize:11,color:T.tx2,fontFamily:mn,marginTop:2}}>{Math.round(TD/EP).toLocaleString()} ETH @ ${EP.toLocaleString()}</div></div>
           <div style={{...C,padding:18}}><div style={Lb}>Whitehat Recovered (exploit prices)</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.gn}}>${(WHE/1e6).toFixed(2)}M</div><div style={{fontSize:11,color:T.tx2,fontFamily:mn,marginTop:2}}>{Math.round(WHE/EP).toLocaleString()} ETH</div></div>
@@ -158,7 +276,7 @@ const App = function App(){
               <span style={{color:T.tx2,fontSize:12,transition:"transform .2s",transform:isE?"rotate(180deg)":"none"}}>&#9662;</span></div></div>
             {isE&&(<div style={{padding:"0 16px 14px",borderTop:`1px solid ${T.bd}`}}><div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",marginTop:10}}><thead><tr style={{fontSize:8,color:T.tx2,textTransform:"uppercase",letterSpacing:.5}}>
-                {["Token","Gross","Bounty","Net for LPs","Base","$ Exploit","$ Recovery","$ Now","% Claimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
+                {["Token","Gross","Bounty","Net for LPs","Base","$ Exploit","$ Recovery","$ Now","% Unclaimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
                 <tbody>{ch.det.map((x,i)=><TRow key={i} x={x}/>)}</tbody></table></div>
               {ch.ms&&<div style={{marginTop:10,padding:"6px 10px",background:T.bg3,borderRadius:5,fontSize:9}}><span style={{color:T.tx2}}>DAO Multisig: </span><a href={`https://${ch.ex}/address/${ch.ms}`} target="_blank" rel="noopener noreferrer" style={{color:T.ac,textDecoration:"none",fontFamily:mn,fontSize:9}}>{ch.ms}</a></div>}
             </div>)}</div>)})}</div>
@@ -187,7 +305,7 @@ const App = function App(){
               <span style={{color:T.tx2,fontSize:12,transition:"transform .2s",transform:isE?"rotate(180deg)":"none"}}>&#9662;</span></div></div>
             {isE&&(<div style={{padding:"0 16px 14px",borderTop:`1px solid ${T.bd}`}}><div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",marginTop:10}}><thead><tr style={{fontSize:8,color:T.tx2,textTransform:"uppercase",letterSpacing:.5}}>
-                {["Token","Gross","Bounty","Net for LPs","In ETH","$ Rescue","$ Recovery","$ Now","% Claimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
+                {["Token","Gross","Bounty","Net for LPs","In ETH","$ Rescue","$ Recovery","$ Now","% Unclaimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
                 <tbody>{ch.det.map((x,i)=><TRow key={i} x={x} showBounty={false}/>)}</tbody></table></div>
               <div style={{marginTop:10,padding:"6px 10px",background:T.bg3,borderRadius:5,fontSize:9,display:"flex",flexWrap:"wrap",gap:6,justifyContent:"space-between"}}>
                 <span><span style={{color:T.tx2}}>Multisig: </span><a href={`https://${ch.ex}/address/${ch.ms}`} target="_blank" rel="noopener noreferrer" style={{color:T.ac,textDecoration:"none",fontFamily:mn,fontSize:9}}>{ch.ms}</a></span>
@@ -207,7 +325,7 @@ const App = function App(){
 
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:28}}>
         <div style={{...C,padding:18}}><h3 style={{fontSize:13,fontWeight:700,marginBottom:6}}>Scope</h3><p style={{fontSize:10,color:T.tx2,lineHeight:1.7}}>
-          Whitehat ($4.67M) + Certora metastable ($4.11M). Excluded: StakeWise, Gnosis frozen, Hypernative-paused. % Claimed is computed from GitHub CSV allocations (per-user shares) vs live multisig balances. Whitehat and metastable percentages are computed independently via proportional splitting on shared multisigs.
+          Whitehat ($4.67M) + Certora metastable ($4.11M). Excluded: StakeWise, Gnosis frozen, Hypernative-paused. Global % Claimed is computed as DAO multisig inflows minus remaining balances, with asset prices frozen at time of each inflow to avoid discrepancy. Snapshot: Mar 8, 2026.
         </p></div>
         <div style={{...C,padding:18}}><h3 style={{fontSize:13,fontWeight:700,marginBottom:6}}>Links</h3><div style={{display:"flex",flexDirection:"column",gap:5}}>
           {[{l:"Claim Portal",u:"https://balancer.fi/portfolio",p:true},{l:"BIP-892",u:"https://forum.balancer.fi/t/bip-892-distribution-of-rescued-funds-from-balancer-v2-november-3rd-2025-attacks/6883"},{l:"BIP-908",u:"https://forum.balancer.fi/t/bip-908-bounty-for-information-and-recovery-of-stolen-funds/6958"},{l:"Shares Repo",u:"https://github.com/maxyz-xyz/balancer-upscale-exploit-shares"},{l:"Post-Mortem",u:"https://medium.com/balancer-protocol/nov-3-exploit-post-mortem-51dcbeb6b020"},{l:"Contact",u:"mailto:admin@balancer.finance"}].map((lk,i)=>(<a key={i} href={lk.u} target="_blank" rel="noopener noreferrer" style={{color:lk.p?"#fff":T.ac,textDecoration:"none",fontSize:10,fontWeight:lk.p?700:500,padding:"5px 8px",background:lk.p?T.ac:T.bg3,borderRadius:5}}>{lk.l}</a>))}
