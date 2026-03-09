@@ -58,7 +58,10 @@ const pct=n=>`${(n*100).toFixed(2)}%`;
 
 // Live on-chain % Unclaimed via public RPC balanceOf calls
 const RPC={"1":"https://eth.llamarpc.com","137":"https://polygon-rpc.com","42161":"https://arb1.arbitrum.io/rpc","8453":"https://mainnet.base.org","10":"https://mainnet.optimism.io"};
-const MS={"1":"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f","137":"0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85","42161":"0xaF23DC5983230E9eEAf93280e312e57539D098D0","8453":"0xC40DCFB13651e64C8551007aa57F9260827B6462","10":"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc"};
+// Query the Angle Distributor (holds unclaimed recovery tokens) instead of DAO multisig
+// DAO multisigs also hold unrelated treasury funds, making balanceOf unreliable there
+// The Angle Distributor is at the same address on all chains
+const DISTRIBUTOR="0x3Ef3D8bA38EBe18DB133cEc108f4D14CE00Dd9Ae";
 // CSV totals: "chainId|tokenContract" -> [combined, whitehat, meta]
 const ALLOC={
   "1|0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2":[632.77,122.40,510.37],
@@ -115,9 +118,9 @@ async function fetchAllBalances(){
   const results={};const tasks=[];
   for(const key of Object.keys(ALLOC)){
     const[cid,tokenAddr]=key.split("|");
-    const rpc=RPC[cid];const ms=MS[cid];
-    if(!rpc||!ms)continue;
-    tasks.push(fetchBalance(rpc,tokenAddr,ms).then(bal=>{results[key]=bal}));
+    const rpc=RPC[cid];
+    if(!rpc)continue;
+    tasks.push(fetchBalance(rpc,tokenAddr,DISTRIBUTOR).then(bal=>{results[key]=bal}));
   }
   await Promise.allSettled(tasks);return results;
 }
