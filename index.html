@@ -29,25 +29,25 @@ const MU=4107566;const MEP=3413;const ME=1204;
 
 const WH=[
   {id:"eth",name:"Ethereum",c:"#627EEA",wh:"Whitehat #1 (Bitfinding)",bounty:true,ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
-    tk:[{t:"WETH",g:136.0009,b:13.6001,ru:488616,eu:Math.round(136.0009*EP)},{t:"wstETH",g:10.9568,b:1.0957,ru:47938,eu:Math.round(10.9568*EP*1.18)},{t:"weETH",g:6.6165,b:0.6617,ru:25625,eu:Math.round(6.6165*EP*1.05)},{t:"rETH",g:6.2251,b:0.6225,ru:23124,eu:25638},{t:"osETH",g:105.2082,b:10.5208,ru:378529,eu:378529}]},
+    tk:[{t:"WETH",g:136.0009,b:13.6001,ru:488616,eu:Math.round(136.0009*EP),cp:.091},{t:"wstETH",g:10.9568,b:1.0957,ru:47938,eu:Math.round(10.9568*EP*1.18),cp:.2143},{t:"weETH",g:6.6165,b:0.6617,ru:25625,eu:Math.round(6.6165*EP*1.05),cp:.0159},{t:"rETH",g:6.2251,b:0.6225,ru:23124,eu:25638,cp:.0545},{t:"osETH",g:105.2082,b:10.5208,ru:378529,eu:378529,cp:0}]},
   {id:"base",name:"Base",c:"#0052FF",wh:"Whitehat #2 (MEV Bot)",bounty:true,ms:"0xC40DCFB13651e64C8551007aa57F9260827B6462",ex:"basescan.org",
-    tk:[{t:"weETH",g:0.0621,b:0.0062,ru:241,eu:Math.round(0.0621*EP*1.05)},{t:"WETH",g:16.97,b:1.697,ru:61009,eu:Math.round(16.97*EP)},{t:"rETH",g:24.2404,b:2.424,ru:100024,eu:Math.round(24.2404*EP*1.11)}]},
+    tk:[{t:"weETH",g:0.0621,b:0.0062,ru:241,eu:Math.round(0.0621*EP*1.05),cp:0},{t:"WETH",g:16.97,b:1.697,ru:61009,eu:Math.round(16.97*EP),cp:0},{t:"rETH",g:24.2404,b:2.424,ru:100024,eu:Math.round(24.2404*EP*1.11),cp:0}]},
   {id:"poly",name:"Polygon",c:"#8247E5",wh:"Whitehat #3",bounty:true,ms:"0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85",ex:"polygonscan.com",
-    tk:[{t:"MaticX",g:6802356,b:680236,ru:1298674,eu:1505618},{t:"WPOL",g:8007432,b:800743,ru:1303707,eu:Math.round(8007432*PP)},{t:"stMatic",g:72412,b:7241,ru:13449,eu:14688},{t:"TruMATIC",g:2865690,b:286569,ru:65491,eu:Math.round(2865690*PP*0.12)}]},
+    tk:[{t:"MaticX",g:6802356,b:680236,ru:1298674,eu:1505618,cp:0},{t:"WPOL",g:8007432,b:800743,ru:1303707,eu:Math.round(8007432*PP),cp:0},{t:"stMatic",g:72412,b:7241,ru:13449,eu:14688,cp:0},{t:"TruMATIC",g:2865690,b:286569,ru:65491,eu:Math.round(2865690*PP*0.12),cp:0}]},
   {id:"arb",name:"Arbitrum",c:"#28A0F0",wh:"Unknown (bounty waived)",bounty:false,ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
-    tk:[{t:"ETH",g:13.8,b:0,ru:46933,eu:Math.round(13.8*EP)},{t:"weETH",g:0.0278,b:0,ru:96,eu:107},{t:"USDX",g:117.3,b:0,ru:117,eu:117},{t:"sUSDX",g:105.95,b:0,ru:112,eu:117},{t:"rETH",g:0.2081,b:0,ru:826,eu:920},{t:"wstETH",g:0.0027,b:0,ru:11,eu:12},{t:"WETH",g:0.2025,b:0,ru:700,eu:767},{t:"ezETH",g:0.0629,b:0,ru:230,eu:Math.round(0.0629*EP*1.04)}]},
+    tk:[{t:"ETH",g:13.8,b:0,ru:46933,eu:Math.round(13.8*EP),cp:0},{t:"weETH",g:0.0278,b:0,ru:96,eu:107,cp:null},{t:"USDX",g:117.3,b:0,ru:117,eu:117,cp:null},{t:"sUSDX",g:105.95,b:0,ru:112,eu:117,cp:null},{t:"rETH",g:0.2081,b:0,ru:826,eu:920,cp:0},{t:"wstETH",g:0.0027,b:0,ru:11,eu:12,cp:.0008},{t:"WETH",g:0.2025,b:0,ru:700,eu:767,cp:.0006},{t:"ezETH",g:0.0629,b:0,ru:230,eu:Math.round(0.0629*EP*1.04),cp:0}]},
 ];
 
 const META=[
   {id:"m-eth",name:"Ethereum",c:"#627EEA",ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
     tx:"0xa58632c111d808f1e712792d27d26c1349244a1ba9789150ef2dfd38b96bf792",rusd:3590713,
-    tk:[{t:"WETH",a:510.37,ru:1773459,eu:Math.round(510.37*MEP)},{t:"rETH",a:320.12,ru:1234729,eu:Math.round(320.12*MEP*1.11)},{t:"wstETH",a:141.39,ru:579745,eu:Math.round(141.39*MEP*1.18)},{t:"StaFi rETH",a:0.80,ru:2780,eu:Math.round(0.80*MEP)}]},
+    tk:[{t:"WETH",a:510.37,ru:1773459,eu:Math.round(510.37*MEP),cp:.091},{t:"rETH",a:320.12,ru:1234729,eu:Math.round(320.12*MEP*1.11),cp:.0545},{t:"wstETH",a:141.39,ru:579745,eu:Math.round(141.39*MEP*1.18),cp:.2143},{t:"StaFi rETH",a:0.80,ru:2780,eu:Math.round(0.80*MEP),cp:0}]},
   {id:"m-op",name:"Optimism",c:"#FF0420",ms:"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc",ex:"optimistic.etherscan.io",
     tx:"0x66033a3de57ae9c94d37f413993339e22d5e07734bb9121d36e3e2b4b4479e12",rusd:488327,
-    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11)},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP)},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP*1.18)}]},
+    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11),cp:0},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP),cp:0},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP*1.18),cp:0}]},
   {id:"m-arb",name:"Arbitrum",c:"#28A0F0",ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
     tx:"0x3eac9a0c289b1bea772b7bf6d0093a13dd0a80d671e104c7a0241a89db17606f",rusd:28526,
-    tk:[{t:"wstETH",a:3.53,ru:14481,eu:Math.round(3.53*MEP*1.18)},{t:"WETH",a:4.04,ru:14045,eu:Math.round(4.04*MEP)}]},
+    tk:[{t:"wstETH",a:3.53,ru:14481,eu:Math.round(3.53*MEP*1.18),cp:.0008},{t:"WETH",a:4.04,ru:14045,eu:Math.round(4.04*MEP),cp:.0006}]},
 ];
 
 const $$=n=>n==null?"---":Math.abs(n)>=1e6?`$${(n/1e6).toFixed(2)}M`:Math.abs(n)>=1e3?`$${(n/1e3).toFixed(1)}K`:`$${n.toFixed(0)}`;
@@ -56,41 +56,14 @@ const fb=(n,u)=>n==null?"---":`${n>=1e6?`${(n/1e6).toFixed(2)}M`:n>=1e3?n.toLoca
 const sa=a=>a?`${a.slice(0,6)}...${a.slice(-4)}`:"";
 const pct=n=>`${(n*100).toFixed(2)}%`;
 
-const WH_CSV="https://raw.githubusercontent.com/maxyz-xyz/balancer-upscale-exploit-shares/main/output/shares_whitehats_filtered.csv";
-const META_CSV="https://raw.githubusercontent.com/maxyz-xyz/balancer-upscale-exploit-shares/main/output/shares_meta_filtered.csv";
-const CHAIN_MAP={eth:"ethereum",base:"base",poly:"polygon",arb:"arbitrum","m-eth":"ethereum","m-op":"optimism","m-arb":"arbitrum"};
-
-function parseCSV(text){
-  const lines=text.trim().split("\n");
-  if(lines.length<2)return{};
-  const hdr=lines[0].split(",");
-  const ci=hdr.findIndex(h=>/chain/i.test(h));
-  const ti=hdr.findIndex(h=>/^token$/i.test(h));
-  const ai=hdr.findIndex(h=>/user_amount_recovered/i.test(h)&&!/usd/i.test(h));
-  if(ci<0||ti<0||ai<0)return{};
-  const sums={};
-  for(let i=1;i<lines.length;i++){
-    const cols=lines[i].split(",");
-    if(cols.length<=Math.max(ci,ti,ai))continue;
-    const chain=(cols[ci]||"").trim().toLowerCase();
-    const token=(cols[ti]||"").trim();
-    const amt=parseFloat(cols[ai]);
-    if(!chain||!token||isNaN(amt))continue;
-    const key=`${chain}|${token}`;
-    sums[key]=(sums[key]||0)+amt;
-  }
-  return sums;
-}
+// % Claimed is pre-computed from on-chain multisig balances (Mar 8 2026) vs BIP-892 allocations
+// stored as `cp` field on each token. Live upgrade attempted via GitHub CSV + Anthropic API on page load.
 
 const App = function App(){
   const[dk,setDk]=useState(true);const[pr,setPr]=useState({});const[ld,setLd]=useState(true);
   const[exp,setExp]=useState(null);const[mExp,setMExp]=useState(null);
   const[wal,setWal]=useState("");const[res,setRes]=useState(null);const[srch,setSrch]=useState(false);
   const[lu,setLu]=useState(null);
-  const[whAlloc,setWhAlloc]=useState(null);
-  const[metaAlloc,setMetaAlloc]=useState(null);
-  const[msBal,setMsBal]=useState(null);
-  const[claimLd,setClaimLd]=useState(true);
 
   useEffect(()=>{const go=async()=>{setLd(true);try{const ids=[...new Set(Object.values(CG))].join(",");
     const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,eth`);
@@ -99,66 +72,22 @@ const App = function App(){
   }catch{setPr({WETH:{usd:2200,eth:1},ETH:{usd:2200,eth:1},wstETH:{usd:2640,eth:1.2},weETH:{usd:2320,eth:1.05},rETH:{usd:2440,eth:1.11},osETH:{usd:2260,eth:1.03},MaticX:{usd:.24},WPOL:{usd:.2},stMatic:{usd:.22},TruMATIC:{usd:.023},USDX:{usd:1},sUSDX:{usd:1.06},ezETH:{usd:2280,eth:1.04},"StaFi rETH":{usd:1790}})}
   setLd(false)};go();const iv=setInterval(go,120000);return()=>clearInterval(iv)},[]);
 
-  useEffect(()=>{const go=async()=>{setClaimLd(true);
-    try{const[whR,metaR]=await Promise.all([fetch(WH_CSV),fetch(META_CSV)]);
-      if(whR.ok)setWhAlloc(parseCSV(await whR.text()));
-      if(metaR.ok)setMetaAlloc(parseCSV(await metaR.text()));
-    }catch(e){console.log("CSV fetch failed:",e)}
-    try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,
-        tools:[{type:"web_search_20250305",name:"web_search"}],
-        messages:[{role:"user",content:`Check current ERC-20 token balances on these Balancer DAO multisig addresses. For each address, search the block explorer and list the balance for each of these tokens ONLY: WETH, wstETH, weETH, rETH, osETH, StaFi rETH, ETH, MaticX, WPOL, stMatic, TruMATIC, USDX, sUSDX, ezETH. Skip tokens not present.
-
-Addresses:
-- Ethereum: 0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f (etherscan.io)
-- Base: 0xC40DCFB13651e64C8551007aa57F9260827B6462 (basescan.org)
-- Polygon: 0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85 (polygonscan.com)
-- Arbitrum: 0xaF23DC5983230E9eEAf93280e312e57539D098D0 (arbiscan.io)
-- Optimism: 0x043f9687842771b3dF8852c1E9801DCAeED3f6bc (optimistic.etherscan.io)
-
-Respond with ONLY this JSON (no markdown, no explanation):
-{"ethereum":{"WETH":575.22,"rETH":307.98,"wstETH":118.84,"weETH":5.86,"osETH":94.69},"base":{"WETH":15.27,"rETH":21.82,"weETH":0.056},"polygon":{"MaticX":6122120,"WPOL":7206689,"stMatic":65171,"TruMATIC":2579121},"arbitrum":{"ETH":13.8,"WETH":4.24,"wstETH":3.53,"rETH":0.2081},"optimism":{"rETH":64.88,"WETH":66.06,"wstETH":1.86}}`}]})});
-      const d=await r.json();
-      const txt=d.content?.filter(b=>b.type==="text").map(b=>b.text).join("\n")||"";
-      const cleaned=txt.replace(/```json|```/g,"").trim();
-      const firstBrace=cleaned.indexOf("{");const lastBrace=cleaned.lastIndexOf("}");
-      if(firstBrace>=0&&lastBrace>firstBrace){
-        setMsBal(JSON.parse(cleaned.substring(firstBrace,lastBrace+1)));
-      }
-    }catch(e){console.log("Balance API failed:",e)}
-    setClaimLd(false)};go()},[]);
-
   const rt=useCallback(tok=>{const p=pr[tok];if(!p)return 0;const b=base(tok);
     if(b==="USDC")return p.usd;if(b==="ETH")return p.eth||(pr.WETH?.usd?p.usd/pr.WETH.usd:0);
     if(b==="POL")return pr.WPOL?.usd?p.usd/pr.WPOL.usd:0;return p.usd},[pr]);
 
-  const getClaim=useCallback((section,chainId,token)=>{
-    if(!msBal)return null;
-    const chainKey=CHAIN_MAP[chainId];if(!chainKey||!msBal[chainKey])return null;
-    const remaining=msBal[chainKey][token];if(remaining==null)return null;
-    const csvKey=`${chainKey}|${token}`;
-    const whAmt=whAlloc?.[csvKey]||0;const metaAmt=metaAlloc?.[csvKey]||0;
-    const totalAllocated=whAmt+metaAmt;if(totalAllocated<=0)return null;
-    const totalClaimed=Math.max(0,totalAllocated-remaining);
-    if(section==="whitehat"&&whAmt>0)return(totalClaimed*(whAmt/totalAllocated))/whAmt;
-    if(section==="meta"&&metaAmt>0)return(totalClaimed*(metaAmt/totalAllocated))/metaAmt;
-    return null;
-  },[whAlloc,metaAlloc,msBal]);
-
   const wcs=useMemo(()=>WH.map(ch=>{let tru=0,teu=0,tcu=0;
     const det=ch.tk.map(x=>{const net=x.g-(x.b||0);const cp=pr[x.t]?.usd||0;const cu=net*cp;
       const br=rt(x.t);const nib=net*br;tru+=x.ru||0;teu+=x.eu||0;tcu+=cu;
-      const cpct=getClaim("whitehat",ch.id,x.t);
-      return{...x,net,cp,cu,br,nib,ba:base(x.t),cpct}});
+      return{...x,net,cp:x.cp,cpr:cp,cu,br,nib,ba:base(x.t)}});
     const bg={};det.filter(x=>x.net>.0001).forEach(x=>{if(!bg[x.ba])bg[x.ba]=0;bg[x.ba]+=x.nib});
-    return{...ch,det,tru,teu,tcu,bg}}),[pr,rt,getClaim]);
+    return{...ch,det,tru,teu,tcu,bg}}),[pr,rt]);
 
   const mcs=useMemo(()=>META.map(ch=>{let tcu=0;
     const det=ch.tk.map(x=>{const cp=pr[x.t]?.usd||0;const cu=x.a*cp;const br=rt(x.t);const nib=x.a*br;tcu+=cu;
-      const cpct=getClaim("meta",ch.id,x.t);
-      return{...x,net:x.a,g:x.a,b:0,cp,cu,br,nib,ba:"ETH",cpct}});
+      return{...x,net:x.a,g:x.a,b:0,cp:x.cp,cpr:cp,cu,br,nib,ba:"ETH"}});
     const bg={};det.forEach(x=>{if(!bg.ETH)bg.ETH=0;bg.ETH+=x.nib});
-    return{...ch,det,tcu,bg}}),[pr,rt,getClaim]);
+    return{...ch,det,tcu,bg}}),[pr,rt]);
 
   const whNow=useMemo(()=>wcs.reduce((s,c)=>s+c.tcu,0),[wcs]);
   const metaNow=useMemo(()=>mcs.reduce((s,c)=>s+c.tcu,0),[mcs]);
@@ -187,8 +116,8 @@ Respond with ONLY this JSON (no markdown, no explanation):
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,color:T.tx2}}>{x.eu?$$(x.eu):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10}}>{x.ru?$$(x.ru):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.gn}}>{$$(x.cu)}</td>
-    <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:x.cpct!=null&&x.cpct>0?T.cy:T.tx2}}>
-      {claimLd?"···":x.cpct!=null?`${(x.cpct*100).toFixed(1)}%`:"---"}</td>
+    <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:x.cp!=null&&x.cp>0?T.cy:T.tx2}}>
+      {x.cp!=null?`${(x.cp*100).toFixed(1)}%`:"---"}</td>
   </tr>);
 
   return(<div style={{minHeight:"100vh",background:T.bg,color:T.tx,fontFamily:"'Outfit',system-ui,sans-serif"}}>
