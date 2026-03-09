@@ -1,6 +1,8 @@
 # Balancer Recovery Dashboard
 
-Live dashboard tracking recovered funds from the Balancer V2 Composable Stable Pool exploit on November 3, 2025.
+Live [dashboard](https://0xdanko.github.io/balancer-recovery-dashboard/) tracking recovered funds from the Balancer V2 Composable Stable Pool exploit on November 3, 2025.
+
+
 
 ## What it tracks
 
