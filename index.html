@@ -58,10 +58,8 @@ const pct=n=>`${(n*100).toFixed(2)}%`;
 
 // Live on-chain % Unclaimed via public RPC balanceOf calls
 const RPC={"1":"https://eth.llamarpc.com","137":"https://polygon-rpc.com","42161":"https://arb1.arbitrum.io/rpc","8453":"https://mainnet.base.org","10":"https://mainnet.optimism.io"};
-// Query the Angle Distributor (holds unclaimed recovery tokens) instead of DAO multisig
-// DAO multisigs also hold unrelated treasury funds, making balanceOf unreliable there
-// The Angle Distributor is at the same address on all chains
-const DISTRIBUTOR="0x3Ef3D8bA38EBe18DB133cEc108f4D14CE00Dd9Ae";
+// Query DAO multisigs (recovery-only, no unrelated treasury funds)
+const MSIG={"1":"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f","137":"0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85","42161":"0xaF23DC5983230E9eEAf93280e312e57539D098D0","8453":"0xC40DCFB13651e64C8551007aa57F9260827B6462","10":"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc"};
 // CSV totals: "chainId|tokenContract" -> [combined, whitehat, meta]
 const ALLOC={
   "1|0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2":[632.77,122.40,510.37],
@@ -118,9 +116,9 @@ async function fetchAllBalances(){
   const results={};const tasks=[];
   for(const key of Object.keys(ALLOC)){
     const[cid,tokenAddr]=key.split("|");
-    const rpc=RPC[cid];
-    if(!rpc)continue;
-    tasks.push(fetchBalance(rpc,tokenAddr,DISTRIBUTOR).then(bal=>{results[key]=bal}));
+    const rpc=RPC[cid];const ms=MSIG[cid];
+    if(!rpc||!ms)continue;
+    tasks.push(fetchBalance(rpc,tokenAddr,ms).then(bal=>{results[key]=bal}));
   }
   await Promise.allSettled(tasks);return results;
 }
@@ -178,6 +176,17 @@ const App = function App(){
   const whNow=useMemo(()=>wcs.reduce((s,c)=>s+c.tcu,0),[wcs]);
   const metaNow=useMemo(()=>mcs.reduce((s,c)=>s+c.tcu,0),[mcs]);
 
+  const globalPct=useMemo(()=>{
+    if(!bals)return null;
+    let tA=0,tR=0;
+    for(const key of Object.keys(ALLOC)){
+      const c=ALLOC[key][0];tA+=c;
+      const b=bals[key];tR+=(b!=null&&b>=0?Math.min(b,c):c);
+    }
+    const claimed=Math.max(0,tA-tR);
+    return tA>0?claimed/tA:0;
+  },[bals]);
+
   const search=useCallback(async()=>{if(!wal||wal.length<10)return;setSrch(true);setRes(null);
     try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1024,tools:[{type:"web_search_20250305",name:"web_search"}],
@@ -221,24 +230,8 @@ const App = function App(){
 
     <div style={{padding:"32px 20px",maxWidth:1200,margin:"0 auto"}}>
 
-      {/* ═══ GLOBAL HERO ═══ */}
-      {(()=>{
-        // Compute live global % claimed from on-chain balances
-        let totalAlloc=0,totalRemaining=0,liveReady=!!bals;
-        if(bals){for(const[key,[combined]]=Object.entries?Object.entries(ALLOC):[]){
-          const b=bals[key];if(b!=null){totalAlloc+=combined;totalRemaining+=Math.min(b,combined)}
-          else{totalAlloc+=combined;totalRemaining+=combined}
-        }
-        // Use Object.entries properly
-        for(const key of Object.keys(ALLOC)){const[combined]=ALLOC[key];const b=bals[key];
-          if(key===Object.keys(ALLOC)[0]){totalAlloc=0;totalRemaining=0}
-        }}
-        // Recalculate cleanly
-        let tA=0,tR=0;
-        for(const key of Object.keys(ALLOC)){const[c]=ALLOC[key];tA+=c;
-          const b=bals?bals[key]:null;tR+=(b!=null?Math.min(b,c):c)}
-        const claimed=Math.max(0,tA-tR);const pctClaimed=tA>0?claimed/tA:0;
-        return(<div style={{marginBottom:32,padding:24,background:`linear-gradient(135deg,${T.ac}18,${T.cd})`,border:`1px solid ${T.ac}40`,borderRadius:14}}>
+      {/* GLOBAL HERO */}
+      <div style={{marginBottom:32,padding:24,background:`linear-gradient(135deg,${T.ac}18,${T.cd})`,border:`1px solid ${T.ac}40`,borderRadius:14}}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,alignItems:"center"}}>
           <div>
             <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Rescued / Recovered</div>
@@ -248,13 +241,13 @@ const App = function App(){
           </div>
           <div style={{textAlign:"right"}}>
             <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Claimed by LPs</div>
-            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>{balsLd?"···":`${(pctClaimed*100).toFixed(1)}%`}</div>
-            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>{balsLd?"Loading on-chain data...":"Live from RPC balanceOf calls"}</div>
-            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Computed as CSV allocations minus current multisig balances via public RPC endpoints across all 5 chains.</div>
+            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>{balsLd||globalPct==null?"···":(globalPct*100).toFixed(1)+"%"}</div>
+            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>{balsLd?"Loading on-chain data...":"Live via RPC balanceOf"}</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>CSV allocations minus current DAO multisig balances via public RPC endpoints across all 5 chains.</div>
             <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",marginTop:10,padding:"8px 20px",background:T.ac,color:"#fff",borderRadius:8,textDecoration:"none",fontWeight:700,fontSize:13}}>Claim at balancer.fi/portfolio</a>
           </div>
         </div>
-      </div>)})()}
+      </div>
 
       <div style={{marginBottom:48}}>
         <div style={{textAlign:"center",marginBottom:16}}><h1 style={{fontSize:24,fontWeight:800,letterSpacing:-.5}}>Whitehat Recovered Funds</h1>
