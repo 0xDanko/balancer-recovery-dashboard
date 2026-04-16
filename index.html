@@ -18,54 +18,76 @@ const { useState, useEffect, useMemo, useCallback } = React;
 
 const Logo=({color="#fff",h=22})=>(<svg height={h} viewBox="0 0 130 24" fill="none"><g fill={color}><ellipse cx="10" cy="6" rx="5" ry="2.2"/><ellipse cx="10" cy="11" rx="7" ry="2.8"/><ellipse cx="10" cy="17" rx="9" ry="3.2"/><text x="24" y="18" fontFamily="'Outfit',sans-serif" fontWeight="700" fontSize="17">Balancer</text></g></svg>);
 
-const ETH_G=["WETH","ETH","wstETH","weETH","rETH","osETH","ezETH","StaFi rETH"];
-const POL_G=["MaticX","WPOL","stMatic","TruMATIC"];const USD_G=["USDX","sUSDX"];
-const base=t=>ETH_G.includes(t)?"ETH":POL_G.includes(t)?"POL":USD_G.includes(t)?"USDC":"USD";
-const CG={WETH:"ethereum",ETH:"ethereum",wstETH:"wrapped-steth",weETH:"wrapped-eeth",rETH:"rocket-pool-eth",osETH:"stakewise-staked-eth",MaticX:"stader-maticx",WPOL:"wmatic",stMatic:"lido-staked-matic",TruMATIC:"trumatic",USDX:"usdx-money",sUSDX:"staked-usdx",ezETH:"renzo-restaked-eth","StaFi rETH":"stafi"};
+// --- Feature flags ---
+const POLYGON_ENABLED=false; // Set true when Polygon campaign restarts
 
-const TD=99551059;const EP=3911.75;
-// WH excludes Polygon (campaign paused, restart pending); to restore: WHE=4674466, WHR=3855453
-const WHE=1242088;const WHR=1174131;const STOLEN=TD-WHE;const RP=WHE/TD;
-const MU=4107566;const MEP=3413;const ME=1204;
+// --- Token classification ---
+const ETH_G=["WETH","wstETH","weETH","rETH","osETH","ezETH","StaFi rETH","rsETH","sfrxETH","ETHx","ankrETH"];
+const USD_G=["USDX","sUSDX"];
+const base=t=>ETH_G.includes(t)?"ETH":USD_G.includes(t)?"USDC":"USD";
 
+// --- CoinGecko IDs (generated from CSV token set) ---
+const CG={WETH:"ethereum",wstETH:"wrapped-steth",weETH:"wrapped-eeth",rETH:"rocket-pool-eth",
+  osETH:"stakewise-staked-eth",ezETH:"renzo-restaked-eth","StaFi rETH":"stafi",
+  rsETH:"kelp-dao-restaked-eth",sfrxETH:"staked-frax-ether",ETHx:"stader-ethx",ankrETH:"ankreth",
+  USDX:"usdx-money",sUSDX:"staked-usdx"};
+
+// --- Global constants ---
+const TD=99551059; // Total drained (exploit prices, all chains incl Polygon)
+const EP=3911.75;  // ETH price at exploit time
+// Whitehat totals: Polygon-conditional
+const WHE_FULL=4674466;const WHR_FULL=3855453; // With Polygon
+const WHE_NO_POLY=1291712;const WHR_NO_POLY=1231008; // Without Polygon
+const WHE=POLYGON_ENABLED?WHE_FULL:WHE_NO_POLY;
+const WHR=POLYGON_ENABLED?WHR_FULL:WHR_NO_POLY;
+const STOLEN=TD-WHE;const RP=WHE/TD;
+const MU=4107566;const MEP=3413;const ME=1204; // Metastable
+const COMBINED=WHE+MU; // Hero total
+const COMBINED_ETH=Math.round(COMBINED/3993);
+
+// --- Whitehat chain data (from Recovered_funds.xlsx + BIP-892) ---
 const WH=[
   {id:"eth",name:"Ethereum",c:"#627EEA",wh:"Whitehat #1 (Bitfinding)",bounty:true,ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
     tk:[{t:"WETH",g:136.0009,b:13.6001,ru:488616,eu:Math.round(136.0009*EP)},{t:"wstETH",g:10.9568,b:1.0957,ru:47938,eu:Math.round(10.9568*EP*1.18)},{t:"weETH",g:6.6165,b:0.6617,ru:25625,eu:Math.round(6.6165*EP*1.05)},{t:"rETH",g:6.2251,b:0.6225,ru:23124,eu:25638},{t:"osETH",g:105.2082,b:10.5208,ru:378529,eu:378529}]},
   {id:"base",name:"Base",c:"#0052FF",wh:"Whitehat #2 (MEV Bot)",bounty:true,ms:"0xC40DCFB13651e64C8551007aa57F9260827B6462",ex:"basescan.org",
     tk:[{t:"weETH",g:0.0621,b:0.0062,ru:241,eu:Math.round(0.0621*EP*1.05)},{t:"WETH",g:16.97,b:1.697,ru:61009,eu:Math.round(16.97*EP)},{t:"rETH",g:24.2404,b:2.424,ru:100024,eu:Math.round(24.2404*EP*1.11)}]},
+  // Arbitrum: corrected per issue #2 — all token addresses verified against CSV
   {id:"arb",name:"Arbitrum",c:"#28A0F0",wh:"Unknown (bounty waived)",bounty:false,ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
-    tk:[{t:"ETH",g:13.8,b:0,ru:46933,eu:Math.round(13.8*EP)},{t:"weETH",g:0.0278,b:0,ru:96,eu:107},{t:"USDX",g:117.3,b:0,ru:117,eu:117},{t:"sUSDX",g:105.95,b:0,ru:112,eu:117},{t:"rETH",g:0.2081,b:0,ru:826,eu:920},{t:"wstETH",g:0.0027,b:0,ru:11,eu:12},{t:"WETH",g:0.2025,b:0,ru:700,eu:767},{t:"ezETH",g:0.0629,b:0,ru:230,eu:Math.round(0.0629*EP*1.04)}]},
+    tk:[{t:"rETH",g:9.6503,b:0,ru:41075,eu:41075},{t:"WETH",g:8.1497,b:0,ru:30280,eu:30280},{t:"weETH",g:2.8623,b:0,ru:11489,eu:11489},{t:"USDX",g:8187.7229,b:0,ru:8181,eu:8181},{t:"sUSDX",g:7396.7606,b:0,ru:7021,eu:7021},{t:"rsETH",g:1.2554,b:0,ru:4938,eu:4938},{t:"wstETH",g:0.4532,b:0,ru:2050,eu:2050},{t:"sfrxETH",g:0.0639,b:0,ru:281,eu:281},{t:"ETHx",g:0.0693,b:0,ru:277,eu:277},{t:"ezETH",g:0.0629,b:0,ru:249,eu:249},{t:"ankrETH",g:0.0137,b:0,ru:61,eu:61}]},
 ];
 
+// --- Metastable chain data (from BIP-892 Section 3.2) ---
 const META=[
   {id:"m-eth",name:"Ethereum",c:"#627EEA",ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
     tx:"0xa58632c111d808f1e712792d27d26c1349244a1ba9789150ef2dfd38b96bf792",rusd:3590713,
     tk:[{t:"WETH",a:510.37,ru:1773459,eu:Math.round(510.37*MEP)},{t:"rETH",a:320.12,ru:1234729,eu:Math.round(320.12*MEP*1.11)},{t:"wstETH",a:141.39,ru:579745,eu:Math.round(141.39*MEP*1.18)},{t:"StaFi rETH",a:0.80,ru:2780,eu:Math.round(0.80*MEP)}]},
   {id:"m-op",name:"Optimism",c:"#FF0420",ms:"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc",ex:"optimistic.etherscan.io",
     tx:"0x66033a3de57ae9c94d37f413993339e22d5e07734bb9121d36e3e2b4b4479e12",rusd:488327,
-    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11)},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP)},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP)}]},
+    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11)},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP)},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP*1.18)}]},
   {id:"m-arb",name:"Arbitrum",c:"#28A0F0",ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
     tx:"0x3eac9a0c289b1bea772b7bf6d0093a13dd0a80d671e104c7a0241a89db17606f",rusd:28526,
     tk:[{t:"wstETH",a:3.53,ru:14481,eu:Math.round(3.53*MEP*1.18)},{t:"WETH",a:4.04,ru:14045,eu:Math.round(4.04*MEP)}]},
 ];
 
+// --- Formatters ---
 const $$=n=>n==null?"---":Math.abs(n)>=1e6?`$${(n/1e6).toFixed(2)}M`:Math.abs(n)>=1e3?`$${(n/1e3).toFixed(1)}K`:`$${n.toFixed(0)}`;
 const fk=n=>n==null?"---":n>=1e6?`${(n/1e6).toFixed(2)}M`:n>=1e3?n.toLocaleString(undefined,{maximumFractionDigits:1}):n<0.01?n.toFixed(6):n.toFixed(4);
 const fb=(n,u)=>n==null?"---":`${n>=1e6?`${(n/1e6).toFixed(2)}M`:n>=1e3?n.toLocaleString(undefined,{maximumFractionDigits:2}):n<0.01?n.toFixed(6):n.toFixed(4)} ${u}`;
 const sa=a=>a?`${a.slice(0,6)}...${a.slice(-4)}`:"";
 const pct=n=>`${(n*100).toFixed(2)}%`;
 
-// Live on-chain % Claimed via public RPC balanceOf calls
-// Multiple RPCs per chain for fallback resilience
+// --- RPC infrastructure (multi-endpoint fallback per chain) ---
 const RPC={
   "1":["https://eth.llamarpc.com","https://ethereum-rpc.publicnode.com","https://rpc.ankr.com/eth"],
   "42161":["https://arb1.arbitrum.io/rpc","https://arbitrum.llamarpc.com","https://rpc.ankr.com/arbitrum"],
   "8453":["https://mainnet.base.org","https://base.llamarpc.com","https://rpc.ankr.com/base"],
   "10":["https://mainnet.optimism.io","https://optimism.llamarpc.com","https://rpc.ankr.com/optimism"],
 };
-// Query DAO multisigs (recovery-only)
 const MSIG={"1":"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f","42161":"0xaF23DC5983230E9eEAf93280e312e57539D098D0","8453":"0xC40DCFB13651e64C8551007aa57F9260827B6462","10":"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc"};
-// CSV totals: "chainId|tokenContract" -> [combined, whitehat, meta]
+
+// --- CSV-derived allocations: "chainId|tokenContract" -> [combined, whitehat, meta] ---
+// Generated programmatically from shares_whitehats_filtered.csv + shares_meta_filtered.csv
+// Issue #2 fix: Arbitrum addresses corrected, all tokens included
 const ALLOC={
   "1|0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2":[632.77,122.40,510.37],
   "1|0xae78736cd615f374d3085123a210448e74fc6393":[325.73,5.60,320.12],
@@ -79,38 +101,63 @@ const ALLOC={
   "8453|0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c":[21.82,21.82,0],
   "8453|0x4200000000000000000000000000000000000006":[15.27,15.27,0],
   "8453|0x04c0599ae5a44757c0af6f9ec3b93da8976c150a":[0.056,0.056,0],
+  "42161|0xf3527ef8de265eaa3716fb312c12847bfba66cef":[8187.72,8187.72,0],
+  "42161|0x7788a3538c5fc7f9c7c8a74eac4c898fc8d87d92":[7396.76,7396.76,0],
   "42161|0x82af49447d8a07e3bd95bd0d56f35241523fbab1":[12.19,8.15,4.04],
+  "42161|0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8":[9.65,9.65,0],
   "42161|0x5979d7b546e38e414f7e9822514be443a4800529":[3.98,0.45,3.53],
   "42161|0x35751007a407ca6feffe80b3cb397736d2cf4dbe":[2.86,2.86,0],
-  "42161|0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8":[9.65,9.65,0],
   "42161|0x4186bfc76e2e237523cbc30fd220fe055156b41f":[1.26,1.26,0],
+  "42161|0xed65c5085a18fa160af0313e60dcc7905e944dc7":[0.069,0.069,0],
+  "42161|0x95ab45875cffdba1e5f451b950bc2e42c0053f39":[0.064,0.064,0],
   "42161|0x2416092f143378750bb29b79ed961ab195cceea5":[0.063,0.063,0],
+  "42161|0xe05a08226c49b636acf99c40da8dc6af83ce5bb3":[0.014,0.014,0],
 };
-// Token symbol -> contract address per chain
+
+// --- Token symbol -> contract address per chain (issue #2: regenerated from CSVs) ---
 const TC={
-  "1|WETH":"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2","1|wstETH":"0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
-  "1|weETH":"0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee","1|rETH":"0xae78736cd615f374d3085123a210448e74fc6393",
-  "1|osETH":"0xf1c9acdc66974dfb6decb12aa385b9cd01190e38","1|StaFi rETH":"0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593",
-  "8453|weETH":"0x04c0599ae5a44757c0af6f9ec3b93da8976c150a","8453|WETH":"0x4200000000000000000000000000000000000006",
-  "8453|rETH":"0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c",
-  "42161|WETH":"0x82af49447d8a07e3bd95bd0d56f35241523fbab1","42161|wstETH":"0x5979d7b546e38e414f7e9822514be443a4800529",
-  "42161|rETH":"0x35751007a407ca6feffe80b3cb397736d2cf4dbe","42161|ETH":"0x4186bfc76e2e237523cbc30fd220fe055156b41f",
-  "42161|USDX":"0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8","42161|ezETH":"0x2416092f143378750bb29b79ed961ab195cceea5",
-  "10|WETH":"0x4200000000000000000000000000000000000006","10|rETH":"0x9bcef72be871e61ed4fbbc7630889bee758eb81d",
+  "1|WETH":"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+  "1|rETH":"0xae78736cd615f374d3085123a210448e74fc6393",
+  "1|wstETH":"0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0",
+  "1|osETH":"0xf1c9acdc66974dfb6decb12aa385b9cd01190e38",
+  "1|weETH":"0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee",
+  "1|StaFi rETH":"0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593",
+  "10|WETH":"0x4200000000000000000000000000000000000006",
+  "10|rETH":"0x9bcef72be871e61ed4fbbc7630889bee758eb81d",
   "10|wstETH":"0x1f32b1c2345538c0c6f582fcb022739c4a194ebb",
+  "8453|rETH":"0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c",
+  "8453|WETH":"0x4200000000000000000000000000000000000006",
+  "8453|weETH":"0x04c0599ae5a44757c0af6f9ec3b93da8976c150a",
+  "42161|USDX":"0xf3527ef8de265eaa3716fb312c12847bfba66cef",
+  "42161|sUSDX":"0x7788a3538c5fc7f9c7c8a74eac4c898fc8d87d92",
+  "42161|WETH":"0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+  "42161|rETH":"0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8",
+  "42161|wstETH":"0x5979d7b546e38e414f7e9822514be443a4800529",
+  "42161|weETH":"0x35751007a407ca6feffe80b3cb397736d2cf4dbe",
+  "42161|rsETH":"0x4186bfc76e2e237523cbc30fd220fe055156b41f",
+  "42161|ETHx":"0xed65c5085a18fa160af0313e60dcc7905e944dc7",
+  "42161|sfrxETH":"0x95ab45875cffdba1e5f451b950bc2e42c0053f39",
+  "42161|ezETH":"0x2416092f143378750bb29b79ed961ab195cceea5",
+  "42161|ankrETH":"0xe05a08226c49b636acf99c40da8dc6af83ce5bb3",
 };
-// chain_id mapping (for token rows -> chain id)
 const CID={eth:"1",base:"8453",arb:"42161","m-eth":"1","m-op":"10","m-arb":"42161"};
 
-// Try multiple RPCs in sequence; return null only if ALL fail (fail loudly per LESSONS-LEARNED)
+// --- Wallet search CSV URLs (issue #1) ---
+const WH_CSV_URL="https://raw.githubusercontent.com/maxyz-xyz/balancer-upscale-exploit-shares/main/output/shares_whitehats_filtered.csv";
+const META_CSV_URL="https://raw.githubusercontent.com/maxyz-xyz/balancer-upscale-exploit-shares/main/output/shares_meta_filtered.csv";
+const CHAIN_NAMES={"1":"Ethereum","10":"Optimism","137":"Polygon","8453":"Base","42161":"Arbitrum"};
+const ADDR_RE=/^0x[a-fA-F0-9]{40}$/;
+
+// --- RPC functions ---
 async function fetchBalance(rpcs,tokenAddr,walletAddr){
   const data="0x70a08231"+walletAddr.replace("0x","").toLowerCase().padStart(64,"0");
   for(const rpc of rpcs){
-    try{const r=await fetch(rpc,{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({jsonrpc:"2.0",id:1,method:"eth_call",params:[{to:tokenAddr,data},"latest"]})});
+    try{
+      const r=await fetch(rpc,{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({jsonrpc:"2.0",id:1,method:"eth_call",params:[{to:tokenAddr,data},"latest"]})});
       const j=await r.json();
       if(j.error)continue;
-      if(j.result&&j.result!=="0x")return parseInt(j.result,16)/1e18;
+      if(j.result&&j.result!=="0x")return Number(BigInt(j.result))/1e18;
       if(j.result==="0x")return 0;
     }catch{continue}
   }
@@ -128,52 +175,81 @@ async function fetchAllBalances(){
   await Promise.allSettled(tasks);return results;
 }
 
-function computeNc(section,chainId,tokenSym,balances){
+// Issue #3b fix: compute combined token-level % unclaimed (not false per-campaign split)
+function computeNc(chainId,tokenSym,balances){
   const cid=CID[chainId];if(!cid)return null;
   const tcKey=`${cid}|${tokenSym}`;const tokenAddr=TC[tcKey];if(!tokenAddr)return null;
   const allocKey=`${cid}|${tokenAddr}`;const alloc=ALLOC[allocKey];if(!alloc)return null;
   const bal=balances[allocKey];if(bal==null)return null;
-  const[combined,wh,meta]=alloc;if(combined<=0)return null;
+  const combined=alloc[0];if(combined<=0)return null;
   const totalClaimed=Math.max(0,combined-bal);
-  const sectionAlloc=section==="whitehat"?wh:meta;
-  if(sectionAlloc<=0)return null;
-  const sectionClaimed=totalClaimed*(sectionAlloc/combined);
-  return Math.max(0,Math.min(1,(sectionAlloc-sectionClaimed)/sectionAlloc));
+  return Math.max(0,Math.min(1,(combined-totalClaimed)/combined));
+}
+
+// Issue #1 fix: wallet search via direct CSV fetch + client-side parse
+async function searchWallet(addr){
+  if(!ADDR_RE.test(addr))return{found:false,message:"Invalid address. Enter a full 0x... address (42 chars)."};
+  const lAddr=addr.toLowerCase();
+  const claims=[];
+  for(const[label,url]of[["Whitehat",WH_CSV_URL],["Metastable",META_CSV_URL]]){
+    try{
+      const r=await fetch(url);if(!r.ok)continue;
+      const lines=(await r.text()).trim().split("\n");
+      const hdr=lines[0].split(",");
+      const ci=hdr.indexOf("chain_id"),ui=hdr.indexOf("user"),ti=hdr.indexOf("token"),
+            ai=hdr.findIndex(h=>h==="user_amount_recovered"),
+            di=hdr.findIndex(h=>h==="user_amount_recovered_usd");
+      for(let i=1;i<lines.length;i++){
+        const cols=lines[i].split(",");
+        if((cols[ui]||"").toLowerCase()===lAddr){
+          claims.push({type:label,chain:CHAIN_NAMES[cols[ci]]||cols[ci],token:cols[ti],
+            amount:parseFloat(cols[ai]),usd:parseFloat(cols[di])});
+        }
+      }
+    }catch{}
+  }
+  if(claims.length===0)return{found:false,message:"No claims found. Check the shares repo directly."};
+  return{found:true,claims};
 }
 
 const App = function App(){
   const[dk,setDk]=useState(true);const[pr,setPr]=useState({});const[ld,setLd]=useState(true);
+  const[prFail,setPrFail]=useState(false); // Issue #4: surface price failure
   const[exp,setExp]=useState(null);const[mExp,setMExp]=useState(null);
   const[wal,setWal]=useState("");const[res,setRes]=useState(null);const[srch,setSrch]=useState(false);
   const[lu,setLu]=useState(null);
   const[bals,setBals]=useState(null);const[balsLd,setBalsLd]=useState(true);
 
-  useEffect(()=>{const go=async()=>{setLd(true);try{const ids=[...new Set(Object.values(CG))].join(",");
+  // Fetch prices — issue #4: surface failure instead of silently using stale fallbacks
+  useEffect(()=>{const go=async()=>{setLd(true);setPrFail(false);try{const ids=[...new Set(Object.values(CG))].join(",");
     const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,eth`);
+    if(!r.ok)throw new Error(r.status);
     const d=await r.json();const m={};for(const[tok,cg]of Object.entries(CG))if(d[cg])m[tok]={usd:d[cg].usd,eth:d[cg].eth||null};
+    if(Object.keys(m).length<3)throw new Error("incomplete");
     setPr(m);setLu(new Date());
-  }catch{setPr({WETH:{usd:2200,eth:1},ETH:{usd:2200,eth:1},wstETH:{usd:2640,eth:1.2},weETH:{usd:2320,eth:1.05},rETH:{usd:2440,eth:1.11},osETH:{usd:2260,eth:1.03},MaticX:{usd:.24},WPOL:{usd:.2},stMatic:{usd:.22},TruMATIC:{usd:.023},USDX:{usd:1},sUSDX:{usd:1.06},ezETH:{usd:2280,eth:1.04},"StaFi rETH":{usd:1790}})}
+  }catch{setPrFail(true);setPr({})}
   setLd(false)};go();const iv=setInterval(go,120000);return()=>clearInterval(iv)},[]);
 
-  // Fetch on-chain balances via public RPCs
+  // Fetch on-chain balances
   useEffect(()=>{const go=async()=>{setBalsLd(true);
     const b=await fetchAllBalances();setBals(b);setBalsLd(false)};go()},[]);
 
   const rt=useCallback(tok=>{const p=pr[tok];if(!p)return 0;const b=base(tok);
     if(b==="USDC")return p.usd;if(b==="ETH")return p.eth||(pr.WETH?.usd?p.usd/pr.WETH.usd:0);
-    if(b==="POL")return pr.WPOL?.usd?p.usd/pr.WPOL.usd:0;return p.usd},[pr]);
+    return p.usd},[pr]);
 
+  // Issue #3b: nc is now combined token-level (not per-campaign)
   const wcs=useMemo(()=>WH.map(ch=>{let tru=0,teu=0,tcu=0;
     const det=ch.tk.map(x=>{const net=x.g-(x.b||0);const cp=pr[x.t]?.usd||0;const cu=net*cp;
       const br=rt(x.t);const nib=net*br;tru+=x.ru||0;teu+=x.eu||0;tcu+=cu;
-      const nc=bals?computeNc("whitehat",ch.id,x.t,bals):null;
+      const nc=bals?computeNc(ch.id,x.t,bals):null;
       return{...x,net,nc,cpr:cp,cu,br,nib,ba:base(x.t)}});
     const bg={};det.filter(x=>x.net>.0001).forEach(x=>{if(!bg[x.ba])bg[x.ba]=0;bg[x.ba]+=x.nib});
     return{...ch,det,tru,teu,tcu,bg}}),[pr,rt,bals]);
 
   const mcs=useMemo(()=>META.map(ch=>{let tcu=0;
     const det=ch.tk.map(x=>{const cp=pr[x.t]?.usd||0;const cu=x.a*cp;const br=rt(x.t);const nib=x.a*br;tcu+=cu;
-      const nc=bals?computeNc("meta",ch.id,x.t,bals):null;
+      const nc=bals?computeNc(ch.id,x.t,bals):null;
       return{...x,net:x.a,g:x.a,b:0,nc,cpr:cp,cu,br,nib,ba:"ETH"}});
     const bg={};det.forEach(x=>{if(!bg.ETH)bg.ETH=0;bg.ETH+=x.nib});
     return{...ch,det,tcu,bg}}),[pr,rt,bals]);
@@ -182,31 +258,23 @@ const App = function App(){
   const metaNow=useMemo(()=>mcs.reduce((s,c)=>s+c.tcu,0),[mcs]);
 
   const globalPct=useMemo(()=>{
-    if(!bals)return null;
-    let tA=0,tR=0;
-    for(const key of Object.keys(ALLOC)){
-      const c=ALLOC[key][0];tA+=c;
-      const b=bals[key];tR+=(b!=null&&b>=0?Math.min(b,c):c);
-    }
-    const claimed=Math.max(0,tA-tR);
-    return tA>0?claimed/tA:0;
+    if(!bals)return null;let tA=0,tR=0;
+    for(const key of Object.keys(ALLOC)){const c=ALLOC[key][0];tA+=c;
+      const b=bals[key];tR+=(b!=null&&b>=0?Math.min(b,c):c)}
+    const claimed=Math.max(0,tA-tR);return tA>0?claimed/tA:0;
   },[bals]);
 
-  const search=useCallback(async()=>{if(!wal||wal.length<10)return;setSrch(true);setRes(null);
-    try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1024,tools:[{type:"web_search_20250305",name:"web_search"}],
-        messages:[{role:"user",content:`Search wallet ${wal} in Balancer exploit recovery at github.com/maxyz-xyz/balancer-upscale-exploit-shares (shares_whitehats_filtered.csv and shares_meta_filtered.csv). JSON only: {"found":true/false,"claims":[{"chain":"...","token":"...","amount":0.0,"usd":0.0}],"message":"..."}`}]})});
-      const d=await r.json();const txt=d.content?.filter(b=>b.type==="text").map(b=>b.text).join("\n")||"";
-      try{setRes({...JSON.parse(txt.replace(/```json|```/g,"").trim()),address:wal})}
-      catch{setRes({found:false,address:wal,message:txt||"Check GitHub directly."})}
-    }catch{setRes({found:false,address:wal,message:"Search failed."})}setSrch(false)},[wal]);
+  // Issue #1: wallet search using direct CSV fetch
+  const search=useCallback(async()=>{if(!wal)return;setSrch(true);setRes(null);
+    const r=await searchWallet(wal);setRes({...r,address:wal});setSrch(false)},[wal]);
 
-  const T=dk?{bg:"#08090d",bg2:"#0f1117",bg3:"#181b24",tx:"#e4e5ea",tx2:"#7d8296",ac:"#627EEA",bd:"#1f2233",cd:"#11131a",gn:"#34d399",rd:"#f87171",yw:"#fbbf24",lc:"#e4e5ea",cy:"#22d3ee"}
-    :{bg:"#f5f6fa",bg2:"#fff",bg3:"#e8eaf0",tx:"#131620",tx2:"#5c6077",ac:"#3b51c8",bd:"#d2d5e2",cd:"#fff",gn:"#059669",rd:"#dc2626",yw:"#d97706",lc:"#131620",cy:"#0891b2"};
+  const T=dk?{bg:"#08090d",bg2:"#0f1117",bg3:"#181b24",tx:"#e4e5ea",tx2:"#7d8296",ac:"#627EEA",bd:"#1f2233",cd:"#11131a",gn:"#34d399",rd:"#f87171",yw:"#fbbf24",lc:"#e4e5ea"}
+    :{bg:"#f5f6fa",bg2:"#fff",bg3:"#e8eaf0",tx:"#131620",tx2:"#5c6077",ac:"#3b51c8",bd:"#d2d5e2",cd:"#fff",gn:"#059669",rd:"#dc2626",yw:"#d97706",lc:"#131620"};
   const mn="'IBM Plex Mono',monospace";
   const C={background:T.cd,border:`1px solid ${T.bd}`,borderRadius:10};
   const Lb={fontSize:9,color:T.tx2,fontWeight:600,textTransform:"uppercase",letterSpacing:.6,marginBottom:6};
 
+  // Issue #3b: column label clarifies this is combined token-level %
   const TRow=({x,showBounty=true})=>(<tr style={{borderTop:`1px solid ${T.bd}15`}}>
     <td style={{padding:"6px",fontWeight:600,fontSize:11}}>{x.t}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10}}>{fk(x.g)}</td>
@@ -215,7 +283,7 @@ const App = function App(){
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,color:T.ac}}>{fb(x.nib,x.ba)}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,color:T.tx2}}>{x.eu?$$(x.eu):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10}}>{x.ru?$$(x.ru):"---"}</td>
-    <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.gn}}>{$$(x.cu)}</td>
+    <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.gn}}>{prFail?"n/a":$$(x.cu)}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.tx}}>
       {balsLd?"···":x.nc!=null?`${(x.nc*100).toFixed(1)}%`:"---"}</td>
   </tr>);
@@ -227,6 +295,7 @@ const App = function App(){
     <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 20px",borderBottom:`1px solid ${T.bd}`,background:T.bg2,position:"sticky",top:0,zIndex:100}}>
       <div style={{display:"flex",alignItems:"center",gap:10}}><Logo color={T.lc} h={20}/><span style={{fontSize:10,color:T.tx2,fontWeight:600,letterSpacing:2,textTransform:"uppercase"}}>Recovery Dashboard</span></div>
       <div style={{display:"flex",alignItems:"center",gap:10}}>
+        {prFail&&<span style={{fontSize:9,color:T.rd,fontWeight:600}}>Prices unavailable</span>}
         <div style={{display:"flex",alignItems:"center",gap:5,padding:"3px 8px",background:`${T.gn}18`,borderRadius:16}}><div style={{width:5,height:5,borderRadius:"50%",background:T.gn,animation:"blink 2s infinite"}}/><span style={{fontSize:10,fontWeight:700,color:T.gn}}>CLAIMS LIVE</span></div>
         {lu&&<span style={{fontSize:9,color:T.tx2}}>{lu.toLocaleTimeString()}</span>}
         <button onClick={()=>setDk(!dk)} style={{background:T.bg3,border:`1px solid ${T.bd}`,borderRadius:5,padding:"4px 10px",color:T.tx,cursor:"pointer",fontSize:10}}>{dk?"sun":"moon"}</button>
@@ -235,20 +304,20 @@ const App = function App(){
 
     <div style={{padding:"32px 20px",maxWidth:1200,margin:"0 auto"}}>
 
-      {/* GLOBAL HERO */}
+      {/* GLOBAL HERO — issue #4: totals consistent with constants */}
       <div style={{marginBottom:32,padding:24,background:`linear-gradient(135deg,${T.ac}18,${T.cd})`,border:`1px solid ${T.ac}40`,borderRadius:14}}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,alignItems:"center"}}>
           <div>
             <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Rescued / Recovered</div>
-            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>$5.35M</div>
-            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>~1,340 ETH across 4 active chains</div>
-            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Whitehat recoveries on Ethereum, Base, Arbitrum ($1.24M at exploit prices) + Certora metastable rescue ($4.11M). Polygon whitehat campaign ($3.12M) paused — restart pending. Excluding StakeWise, Gnosis frozen, Hypernative-paused.</div>
+            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>${(COMBINED/1e6).toFixed(2)}M</div>
+            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>~{COMBINED_ETH.toLocaleString()} ETH across {POLYGON_ENABLED?5:4} chains</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Whitehat recoveries (${(WHE/1e6).toFixed(2)}M at exploit prices) + Certora metastable rescue ($4.11M).{!POLYGON_ENABLED&&" Polygon whitehat ($3.12M) paused."} Excl. StakeWise osETH/osGNO (separate distribution), Gnosis frozen, Hypernative-paused.</div>
           </div>
           <div style={{textAlign:"right"}}>
             <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Claimed by LPs</div>
             <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>{balsLd||globalPct==null?"···":(globalPct*100).toFixed(1)+"%"}</div>
             <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>{balsLd?"Loading on-chain data...":"Live via RPC balanceOf"}</div>
-            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>CSV allocations minus current DAO multisig balances via public RPC endpoints. Polygon temporarily excluded — campaign restart pending.</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Hardcoded CSV allocations vs live DAO multisig balances via public RPC. Combined token-level (not per-campaign).</div>
             <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",marginTop:10,padding:"8px 20px",background:T.ac,color:"#fff",borderRadius:8,textDecoration:"none",fontWeight:700,fontSize:13}}>Claim at balancer.fi/portfolio</a>
           </div>
         </div>
@@ -259,12 +328,12 @@ const App = function App(){
           <p style={{color:T.tx2,fontSize:12,margin:"4px auto 14px",maxWidth:560,lineHeight:1.5}}>Balancer V2 exploit, Nov 3, 2025. BIP-892 passed. 10% bounty per BIP-726. Claiming is live.</p></div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:10}}>
           <div style={{...C,padding:18}}><div style={Lb}>Total Funds Drained</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.rd}}>${(TD/1e6).toFixed(2)}M</div><div style={{fontSize:11,color:T.tx2,fontFamily:mn,marginTop:2}}>{Math.round(TD/EP).toLocaleString()} ETH @ ${EP.toLocaleString()}</div></div>
-          <div style={{...C,padding:18}}><div style={Lb}>Whitehat Recovered (exploit prices)</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.gn}}>${(WHE/1e6).toFixed(2)}M</div><div style={{fontSize:11,color:T.tx2,fontFamily:mn,marginTop:2}}>{Math.round(WHE/EP).toLocaleString()} ETH</div></div>
+          <div style={{...C,padding:18}}><div style={Lb}>Whitehat Recovered (exploit prices)</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.gn}}>${(WHE/1e6).toFixed(2)}M</div><div style={{fontSize:11,color:T.tx2,fontFamily:mn,marginTop:2}}>{Math.round(WHE/EP).toLocaleString()} ETH{!POLYGON_ENABLED&&" (excl. Polygon)"}</div></div>
           <div style={{...C,padding:18}}><div style={Lb}>Recovery Rate (exploit prices)</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.ac}}>{pct(RP)}</div><div style={{fontSize:11,color:T.tx2,marginTop:2}}>of total drained</div></div>
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:24}}>
           <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>At Recovery Prices</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn}}>${(WHR/1e6).toFixed(2)}M</div></div>
-          <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>Current Value (net of bounty)</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn,color:T.gn}}>{ld?"···":$$(whNow)}</div></div>
+          <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>Current Value (net of bounty)</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn,color:T.gn}}>{prFail?"prices unavailable":ld?"···":$$(whNow)}</div></div>
           <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>10% Bounty (BIP-726)</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn,color:T.yw}}>~${Math.round(WHR*.1/1e3)}K</div></div>
         </div>
 
@@ -273,7 +342,7 @@ const App = function App(){
             <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{ch.name}{ch.bounty&&<span style={{marginLeft:6,fontSize:8,padding:"1px 4px",background:`${T.yw}22`,color:T.yw,borderRadius:2,fontWeight:700,verticalAlign:"middle"}}>10% BOUNTY</span>}</div><div style={{fontSize:9,color:T.tx2,marginTop:1}}>{ch.wh}</div></div>
             <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
               <div style={{display:"flex",gap:3,flexWrap:"wrap",justifyContent:"flex-end"}}>{Object.entries(ch.bg).map(([ba,v],i)=>(<span key={i} style={{background:`${ch.c}14`,color:ch.c,padding:"1px 6px",borderRadius:10,fontSize:9,fontWeight:600,fontFamily:mn}}>{fb(v,ba)}</span>))}</div>
-              <div style={{textAlign:"right",minWidth:80}}><div style={{fontFamily:mn,fontSize:9,color:T.tx2}}>Recovery: {$$(ch.tru)}</div><div style={{fontFamily:mn,fontWeight:700,fontSize:12,color:T.gn}}>Now: {ld?"···":$$(ch.tcu)}</div></div>
+              <div style={{textAlign:"right",minWidth:80}}><div style={{fontFamily:mn,fontSize:9,color:T.tx2}}>Recovery: {$$(ch.tru)}</div><div style={{fontFamily:mn,fontWeight:700,fontSize:12,color:T.gn}}>Now: {prFail?"n/a":ld?"···":$$(ch.tcu)}</div></div>
               <span style={{color:T.tx2,fontSize:12,transition:"transform .2s",transform:isE?"rotate(180deg)":"none"}}>&#9662;</span></div></div>
             {isE&&(<div style={{padding:"0 16px 14px",borderTop:`1px solid ${T.bd}`}}><div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",marginTop:10}}><thead><tr style={{fontSize:8,color:T.tx2,textTransform:"uppercase",letterSpacing:.5}}>
@@ -285,7 +354,7 @@ const App = function App(){
 
       <div style={{marginBottom:48}}>
         <div style={{textAlign:"center",marginBottom:16}}><h2 style={{fontSize:24,fontWeight:800,letterSpacing:-.5}}>Metastable Pools Rescue Operation</h2>
-          <p style={{color:T.tx2,fontSize:12,margin:"4px auto 0",maxWidth:600,lineHeight:1.5}}>Internal rescue with Certora targeting CSPv5 pools. 100% recovered, no bounty. Transferred Feb 8, 2026.</p></div>
+          <p style={{color:T.tx2,fontSize:12,margin:"4px auto 0",maxWidth:600,lineHeight:1.5}}>Internal rescue with Certora targeting CSPv5 pools. 100% recovered, no bounty. Transferred to DAO multisigs Feb 8, 2026.</p></div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:10}}>
           <div style={{...C,padding:18}}><div style={Lb}>Total Funds Rescued</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.rd}}>${(MU/1e6).toFixed(2)}M</div><div style={{fontSize:11,color:T.tx2,fontFamily:mn,marginTop:2}}>{ME.toLocaleString()} ETH @ ${MEP.toLocaleString()}</div></div>
           <div style={{...C,padding:18}}><div style={Lb}>Rescued (at rescue prices)</div><div style={{fontSize:22,fontWeight:800,fontFamily:mn,color:T.ac}}>${(MU/1e6).toFixed(2)}M</div><div style={{fontSize:11,color:T.tx2,fontFamily:mn,marginTop:2}}>{ME.toLocaleString()} ETH</div></div>
@@ -293,7 +362,7 @@ const App = function App(){
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:24}}>
           <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>Total Rescued (at recovery)</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn}}>${(MU/1e6).toFixed(2)}M</div></div>
-          <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>Current Value</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn,color:T.gn}}>{ld?"···":$$(metaNow)}</div></div>
+          <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>Current Value</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn,color:T.gn}}>{prFail?"prices unavailable":ld?"···":$$(metaNow)}</div></div>
           <div style={{...C,padding:14}}><div style={{...Lb,marginBottom:4}}>10% Bounty</div><div style={{fontSize:17,fontWeight:800,fontFamily:mn}}>N/A</div></div>
         </div>
 
@@ -302,7 +371,7 @@ const App = function App(){
             <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{ch.name}</div><div style={{fontSize:9,color:T.tx2,marginTop:1}}>Internal Rescue (Certora)</div></div>
             <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
               <div style={{display:"flex",gap:3}}>{Object.entries(ch.bg).map(([ba,v],i)=>(<span key={i} style={{background:`${ch.c}14`,color:ch.c,padding:"1px 6px",borderRadius:10,fontSize:9,fontWeight:600,fontFamily:mn}}>{fb(v,ba)}</span>))}</div>
-              <div style={{textAlign:"right",minWidth:80}}><div style={{fontFamily:mn,fontSize:9,color:T.tx2}}>Recovery: {$$(ch.rusd)}</div><div style={{fontFamily:mn,fontWeight:700,fontSize:12,color:T.gn}}>Now: {ld?"···":$$(ch.tcu)}</div></div>
+              <div style={{textAlign:"right",minWidth:80}}><div style={{fontFamily:mn,fontSize:9,color:T.tx2}}>Recovery: {$$(ch.rusd)}</div><div style={{fontFamily:mn,fontWeight:700,fontSize:12,color:T.gn}}>Now: {prFail?"n/a":ld?"···":$$(ch.tcu)}</div></div>
               <span style={{color:T.tx2,fontSize:12,transition:"transform .2s",transform:isE?"rotate(180deg)":"none"}}>&#9662;</span></div></div>
             {isE&&(<div style={{padding:"0 16px 14px",borderTop:`1px solid ${T.bd}`}}><div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",marginTop:10}}><thead><tr style={{fontSize:8,color:T.tx2,textTransform:"uppercase",letterSpacing:.5}}>
@@ -314,25 +383,27 @@ const App = function App(){
             </div>)}</div>)})}</div>
       </div>
 
+      {/* Issue #1: wallet search via direct CSV fetch */}
       <div style={{...C,borderRadius:12,padding:24,marginBottom:32}}>
         <h2 style={{fontSize:16,fontWeight:700,marginBottom:10}}>Check Your Claim</h2>
-        <p style={{color:T.tx2,fontSize:11,marginBottom:12}}>Search the <a href="https://github.com/maxyz-xyz/balancer-upscale-exploit-shares" target="_blank" rel="noopener noreferrer" style={{color:T.ac,textDecoration:"none"}}>shares repo</a>. Claim at <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{color:T.ac,fontWeight:600,textDecoration:"none"}}>balancer.fi/portfolio</a>.</p>
-        <div style={{display:"flex",gap:8}}><input value={wal} onChange={e=>setWal(e.target.value)} onKeyDown={e=>e.key==="Enter"&&search()} placeholder="0x..." style={{flex:1,padding:"9px 14px",background:T.bg3,border:`1px solid ${T.bd}`,borderRadius:7,color:T.tx,fontSize:12,fontFamily:mn}}/><button onClick={search} disabled={srch||!wal} style={{padding:"9px 20px",background:T.ac,color:"#fff",border:"none",borderRadius:7,fontSize:12,fontWeight:600,cursor:"pointer",opacity:srch||!wal?.5:1}}>{srch?"...":"Search"}</button></div>
+        <p style={{color:T.tx2,fontSize:11,marginBottom:12}}>Searches <a href="https://github.com/maxyz-xyz/balancer-upscale-exploit-shares" target="_blank" rel="noopener noreferrer" style={{color:T.ac,textDecoration:"none"}}>shares_whitehats_filtered.csv + shares_meta_filtered.csv</a> directly from GitHub. Claim at <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{color:T.ac,fontWeight:600,textDecoration:"none"}}>balancer.fi/portfolio</a>.</p>
+        <div style={{display:"flex",gap:8}}><input value={wal} onChange={e=>setWal(e.target.value)} onKeyDown={e=>e.key==="Enter"&&search()} placeholder="0x..." style={{flex:1,padding:"9px 14px",background:T.bg3,border:`1px solid ${T.bd}`,borderRadius:7,color:T.tx,fontSize:12,fontFamily:mn}}/><button onClick={search} disabled={srch||!wal} style={{padding:"9px 20px",background:T.ac,color:"#fff",border:"none",borderRadius:7,fontSize:12,fontWeight:600,cursor:"pointer",opacity:srch||!wal?.5:1}}>{srch?"Searching...":"Search"}</button></div>
         {res&&<div style={{marginTop:14}}>{res.found?(<div style={{background:`${T.gn}10`,border:`1px solid ${T.gn}30`,borderRadius:7,padding:14}}>
           <div style={{fontWeight:600,color:T.gn,fontSize:12,marginBottom:6}}>Claims found for {sa(res.address)}</div>
-          {res.claims?.length>0&&<table style={{width:"100%",borderCollapse:"collapse"}}><tbody>{res.claims.map((c,i)=>(<tr key={i}><td style={{padding:4,fontSize:10}}>{c.chain}</td><td style={{padding:4,fontSize:10,fontWeight:600}}>{c.token}</td><td style={{padding:4,fontSize:10,fontFamily:mn,textAlign:"right"}}>{typeof c.amount==="number"?c.amount.toFixed(6):c.amount}</td><td style={{padding:4,fontSize:10,fontFamily:mn,textAlign:"right"}}>{typeof c.usd==="number"?$$(c.usd):c.usd}</td></tr>))}</tbody></table>}
+          {res.claims?.length>0&&<table style={{width:"100%",borderCollapse:"collapse"}}><tbody>{res.claims.map((c,i)=>(<tr key={i}><td style={{padding:4,fontSize:10}}>{c.type}</td><td style={{padding:4,fontSize:10}}>{c.chain}</td><td style={{padding:4,fontSize:10,fontWeight:600}}>{sa(c.token)}</td><td style={{padding:4,fontSize:10,fontFamily:mn,textAlign:"right"}}>{typeof c.amount==="number"?c.amount.toFixed(6):c.amount}</td><td style={{padding:4,fontSize:10,fontFamily:mn,textAlign:"right"}}>{typeof c.usd==="number"?$$(c.usd):c.usd}</td></tr>))}</tbody></table>}
         </div>):(<div style={{background:`${T.tx2}10`,border:`1px solid ${T.bd}`,borderRadius:7,padding:14}}><div style={{fontWeight:600,fontSize:12}}>No claims for {sa(res.address)}</div><p style={{fontSize:10,color:T.tx2,marginTop:4}}>{res.message}</p></div>)}</div>}
       </div>
 
+      {/* Issue #4: scope box consistent with code behavior */}
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:28}}>
         <div style={{...C,padding:18}}><h3 style={{fontSize:13,fontWeight:700,marginBottom:6}}>Scope</h3><p style={{fontSize:10,color:T.tx2,lineHeight:1.7}}>
-          Whitehat ($4.67M) + Certora metastable ($4.11M). Excluded: StakeWise, Gnosis frozen, Hypernative-paused. Global % Claimed is computed as DAO multisig inflows minus remaining balances, with asset prices frozen at time of each inflow to avoid discrepancy. Snapshot: Mar 8, 2026.
+          Whitehat (${(WHE/1e6).toFixed(2)}M at exploit prices across {POLYGON_ENABLED?5:4} chains) + Certora metastable ($4.11M). {!POLYGON_ENABLED&&"Polygon whitehat ($3.12M) paused. "} Excluded: StakeWise osETH/osGNO distribution ($21.8M, handled separately by StakeWise DAO), Gnosis Chain frozen ($7.1M), Hypernative-paused ($19.4M). osETH in the Ethereum whitehat table refers to osETH recovered by Whitehat #1 (Bitfinding), not the separate StakeWise distribution. % Unclaimed is combined token-level from RPC balanceOf on DAO multisigs vs hardcoded CSV allocations. Prices via CoinGecko free tier.
         </p></div>
         <div style={{...C,padding:18}}><h3 style={{fontSize:13,fontWeight:700,marginBottom:6}}>Links</h3><div style={{display:"flex",flexDirection:"column",gap:5}}>
           {[{l:"Claim Portal",u:"https://balancer.fi/portfolio",p:true},{l:"BIP-892",u:"https://forum.balancer.fi/t/bip-892-distribution-of-rescued-funds-from-balancer-v2-november-3rd-2025-attacks/6883"},{l:"BIP-908",u:"https://forum.balancer.fi/t/bip-908-bounty-for-information-and-recovery-of-stolen-funds/6958"},{l:"Shares Repo",u:"https://github.com/maxyz-xyz/balancer-upscale-exploit-shares"},{l:"Post-Mortem",u:"https://medium.com/balancer-protocol/nov-3-exploit-post-mortem-51dcbeb6b020"},{l:"Contact",u:"mailto:admin@balancer.finance"}].map((lk,i)=>(<a key={i} href={lk.u} target="_blank" rel="noopener noreferrer" style={{color:lk.p?"#fff":T.ac,textDecoration:"none",fontSize:10,fontWeight:lk.p?700:500,padding:"5px 8px",background:lk.p?T.ac:T.bg3,borderRadius:5}}>{lk.l}</a>))}
         </div></div>
       </div>
-      <div style={{textAlign:"center",padding:"14px 0 32px",borderTop:`1px solid ${T.bd}`,color:T.tx2,fontSize:9}}><Logo color={T.tx2} h={14}/><div style={{marginTop:6}}>On-chain verified | BIP-892 | GitHub CSVs | CoinGecko | 180-day claim window</div></div>
+      <div style={{textAlign:"center",padding:"14px 0 32px",borderTop:`1px solid ${T.bd}`,color:T.tx2,fontSize:9}}><Logo color={T.tx2} h={14}/><div style={{marginTop:6}}>BIP-892 | Hardcoded CSV allocations | Live RPC balanceOf | CoinGecko | 180-day claim window</div></div>
     </div>
   </div>);
 }
