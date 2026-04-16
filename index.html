@@ -23,31 +23,30 @@ const POL_G=["MaticX","WPOL","stMatic","TruMATIC"];const USD_G=["USDX","sUSDX"];
 const base=t=>ETH_G.includes(t)?"ETH":POL_G.includes(t)?"POL":USD_G.includes(t)?"USDC":"USD";
 const CG={WETH:"ethereum",ETH:"ethereum",wstETH:"wrapped-steth",weETH:"wrapped-eeth",rETH:"rocket-pool-eth",osETH:"stakewise-staked-eth",MaticX:"stader-maticx",WPOL:"wmatic",stMatic:"lido-staked-matic",TruMATIC:"trumatic",USDX:"usdx-money",sUSDX:"staked-usdx",ezETH:"renzo-restaked-eth","StaFi rETH":"stafi"};
 
-const TD=99551059;const EP=3911.75;const PP=0.192;
-const WHE=4674466;const WHR=3855453;const STOLEN=TD-WHE;const RP=WHE/TD;
+const TD=99551059;const EP=3911.75;
+// WH excludes Polygon (campaign paused, restart pending); to restore: WHE=4674466, WHR=3855453
+const WHE=1242088;const WHR=1174131;const STOLEN=TD-WHE;const RP=WHE/TD;
 const MU=4107566;const MEP=3413;const ME=1204;
 
 const WH=[
   {id:"eth",name:"Ethereum",c:"#627EEA",wh:"Whitehat #1 (Bitfinding)",bounty:true,ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
-    tk:[{t:"WETH",g:136.0009,b:13.6001,ru:488616,eu:Math.round(136.0009*EP),nc:.909},{t:"wstETH",g:10.9568,b:1.0957,ru:47938,eu:Math.round(10.9568*EP*1.18),nc:.786},{t:"weETH",g:6.6165,b:0.6617,ru:25625,eu:Math.round(6.6165*EP*1.05),nc:.984},{t:"rETH",g:6.2251,b:0.6225,ru:23124,eu:25638,nc:.946},{t:"osETH",g:105.2082,b:10.5208,ru:378529,eu:378529,nc:1}]},
+    tk:[{t:"WETH",g:136.0009,b:13.6001,ru:488616,eu:Math.round(136.0009*EP)},{t:"wstETH",g:10.9568,b:1.0957,ru:47938,eu:Math.round(10.9568*EP*1.18)},{t:"weETH",g:6.6165,b:0.6617,ru:25625,eu:Math.round(6.6165*EP*1.05)},{t:"rETH",g:6.2251,b:0.6225,ru:23124,eu:25638},{t:"osETH",g:105.2082,b:10.5208,ru:378529,eu:378529}]},
   {id:"base",name:"Base",c:"#0052FF",wh:"Whitehat #2 (MEV Bot)",bounty:true,ms:"0xC40DCFB13651e64C8551007aa57F9260827B6462",ex:"basescan.org",
-    tk:[{t:"weETH",g:0.0621,b:0.0062,ru:241,eu:Math.round(0.0621*EP*1.05),nc:1},{t:"WETH",g:16.97,b:1.697,ru:61009,eu:Math.round(16.97*EP),nc:1},{t:"rETH",g:24.2404,b:2.424,ru:100024,eu:Math.round(24.2404*EP*1.11),nc:1}]},
-  {id:"poly",name:"Polygon",c:"#8247E5",wh:"Whitehat #3",bounty:true,ms:"0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85",ex:"polygonscan.com",
-    tk:[{t:"MaticX",g:6802356,b:680236,ru:1298674,eu:1505618,nc:1},{t:"WPOL",g:8007432,b:800743,ru:1303707,eu:Math.round(8007432*PP),nc:1},{t:"stMatic",g:72412,b:7241,ru:13449,eu:14688,nc:1},{t:"TruMATIC",g:2865690,b:286569,ru:65491,eu:Math.round(2865690*PP*0.12),nc:1}]},
+    tk:[{t:"weETH",g:0.0621,b:0.0062,ru:241,eu:Math.round(0.0621*EP*1.05)},{t:"WETH",g:16.97,b:1.697,ru:61009,eu:Math.round(16.97*EP)},{t:"rETH",g:24.2404,b:2.424,ru:100024,eu:Math.round(24.2404*EP*1.11)}]},
   {id:"arb",name:"Arbitrum",c:"#28A0F0",wh:"Unknown (bounty waived)",bounty:false,ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
-    tk:[{t:"ETH",g:13.8,b:0,ru:46933,eu:Math.round(13.8*EP),nc:1},{t:"weETH",g:0.0278,b:0,ru:96,eu:107,nc:null},{t:"USDX",g:117.3,b:0,ru:117,eu:117,nc:1},{t:"sUSDX",g:105.95,b:0,ru:112,eu:117,nc:null},{t:"rETH",g:0.2081,b:0,ru:826,eu:920,nc:.999},{t:"wstETH",g:0.0027,b:0,ru:11,eu:12,nc:.999},{t:"WETH",g:0.2025,b:0,ru:700,eu:767,nc:1},{t:"ezETH",g:0.0629,b:0,ru:230,eu:Math.round(0.0629*EP*1.04),nc:1}]},
+    tk:[{t:"ETH",g:13.8,b:0,ru:46933,eu:Math.round(13.8*EP)},{t:"weETH",g:0.0278,b:0,ru:96,eu:107},{t:"USDX",g:117.3,b:0,ru:117,eu:117},{t:"sUSDX",g:105.95,b:0,ru:112,eu:117},{t:"rETH",g:0.2081,b:0,ru:826,eu:920},{t:"wstETH",g:0.0027,b:0,ru:11,eu:12},{t:"WETH",g:0.2025,b:0,ru:700,eu:767},{t:"ezETH",g:0.0629,b:0,ru:230,eu:Math.round(0.0629*EP*1.04)}]},
 ];
 
 const META=[
   {id:"m-eth",name:"Ethereum",c:"#627EEA",ms:"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f",ex:"etherscan.io",
     tx:"0xa58632c111d808f1e712792d27d26c1349244a1ba9789150ef2dfd38b96bf792",rusd:3590713,
-    tk:[{t:"WETH",a:510.37,ru:1773459,eu:Math.round(510.37*MEP),nc:.909},{t:"rETH",a:320.12,ru:1234729,eu:Math.round(320.12*MEP*1.11),nc:.946},{t:"wstETH",a:141.39,ru:579745,eu:Math.round(141.39*MEP*1.18),nc:.786},{t:"StaFi rETH",a:0.80,ru:2780,eu:Math.round(0.80*MEP),nc:.995}]},
+    tk:[{t:"WETH",a:510.37,ru:1773459,eu:Math.round(510.37*MEP)},{t:"rETH",a:320.12,ru:1234729,eu:Math.round(320.12*MEP*1.11)},{t:"wstETH",a:141.39,ru:579745,eu:Math.round(141.39*MEP*1.18)},{t:"StaFi rETH",a:0.80,ru:2780,eu:Math.round(0.80*MEP)}]},
   {id:"m-op",name:"Optimism",c:"#FF0420",ms:"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc",ex:"optimistic.etherscan.io",
     tx:"0x66033a3de57ae9c94d37f413993339e22d5e07734bb9121d36e3e2b4b4479e12",rusd:488327,
-    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11),nc:1},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP),nc:1},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP*1.18),nc:1}]},
+    tk:[{t:"rETH",a:64.88,ru:250712,eu:Math.round(64.88*MEP*1.11)},{t:"WETH",a:66.06,ru:229974,eu:Math.round(66.06*MEP)},{t:"wstETH",a:1.86,ru:7641,eu:Math.round(1.86*MEP)}]},
   {id:"m-arb",name:"Arbitrum",c:"#28A0F0",ms:"0xaF23DC5983230E9eEAf93280e312e57539D098D0",ex:"arbiscan.io",
     tx:"0x3eac9a0c289b1bea772b7bf6d0093a13dd0a80d671e104c7a0241a89db17606f",rusd:28526,
-    tk:[{t:"wstETH",a:3.53,ru:14481,eu:Math.round(3.53*MEP*1.18),nc:.999},{t:"WETH",a:4.04,ru:14045,eu:Math.round(4.04*MEP),nc:1}]},
+    tk:[{t:"wstETH",a:3.53,ru:14481,eu:Math.round(3.53*MEP*1.18)},{t:"WETH",a:4.04,ru:14045,eu:Math.round(4.04*MEP)}]},
 ];
 
 const $$=n=>n==null?"---":Math.abs(n)>=1e6?`$${(n/1e6).toFixed(2)}M`:Math.abs(n)>=1e3?`$${(n/1e3).toFixed(1)}K`:`$${n.toFixed(0)}`;
@@ -56,10 +55,16 @@ const fb=(n,u)=>n==null?"---":`${n>=1e6?`${(n/1e6).toFixed(2)}M`:n>=1e3?n.toLoca
 const sa=a=>a?`${a.slice(0,6)}...${a.slice(-4)}`:"";
 const pct=n=>`${(n*100).toFixed(2)}%`;
 
-// Live on-chain % Unclaimed via public RPC balanceOf calls
-const RPC={"1":"https://eth.llamarpc.com","137":"https://polygon-rpc.com","42161":"https://arb1.arbitrum.io/rpc","8453":"https://mainnet.base.org","10":"https://mainnet.optimism.io"};
-// Query DAO multisigs (recovery-only, no unrelated treasury funds)
-const MSIG={"1":"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f","137":"0xeE071f4B516F69a1603dA393CdE8e76C40E5Be85","42161":"0xaF23DC5983230E9eEAf93280e312e57539D098D0","8453":"0xC40DCFB13651e64C8551007aa57F9260827B6462","10":"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc"};
+// Live on-chain % Claimed via public RPC balanceOf calls
+// Multiple RPCs per chain for fallback resilience
+const RPC={
+  "1":["https://eth.llamarpc.com","https://ethereum-rpc.publicnode.com","https://rpc.ankr.com/eth"],
+  "42161":["https://arb1.arbitrum.io/rpc","https://arbitrum.llamarpc.com","https://rpc.ankr.com/arbitrum"],
+  "8453":["https://mainnet.base.org","https://base.llamarpc.com","https://rpc.ankr.com/base"],
+  "10":["https://mainnet.optimism.io","https://optimism.llamarpc.com","https://rpc.ankr.com/optimism"],
+};
+// Query DAO multisigs (recovery-only)
+const MSIG={"1":"0x10A19e7eE7d7F8a52822f6817de8ea18204F2e4f","42161":"0xaF23DC5983230E9eEAf93280e312e57539D098D0","8453":"0xC40DCFB13651e64C8551007aa57F9260827B6462","10":"0x043f9687842771b3dF8852c1E9801DCAeED3f6bc"};
 // CSV totals: "chainId|tokenContract" -> [combined, whitehat, meta]
 const ALLOC={
   "1|0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2":[632.77,122.40,510.37],
@@ -71,10 +76,6 @@ const ALLOC={
   "10|0x4200000000000000000000000000000000000006":[66.06,0,66.06],
   "10|0x9bcef72be871e61ed4fbbc7630889bee758eb81d":[64.88,0,64.88],
   "10|0x1f32b1c2345538c0c6f582fcb022739c4a194ebb":[1.86,0,1.86],
-  "137|0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270":[7206689,7206689,0],
-  "137|0xfa68fb4628dff1028cfec22b4162fccd0d45efb6":[6122120,6122120,0],
-  "137|0xf33687811f3ad0cd6b48dd4b39f9f977bd7165a2":[2579122,2579122,0],
-  "137|0x3a58a54c066fdc0f2d55fc9c89f0415c92ebf3c4":[65171,65171,0],
   "8453|0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c":[21.82,21.82,0],
   "8453|0x4200000000000000000000000000000000000006":[15.27,15.27,0],
   "8453|0x04c0599ae5a44757c0af6f9ec3b93da8976c150a":[0.056,0.056,0],
@@ -92,33 +93,37 @@ const TC={
   "1|osETH":"0xf1c9acdc66974dfb6decb12aa385b9cd01190e38","1|StaFi rETH":"0x9559aaa82d9649c7a7b220e7c461d2e74c9a3593",
   "8453|weETH":"0x04c0599ae5a44757c0af6f9ec3b93da8976c150a","8453|WETH":"0x4200000000000000000000000000000000000006",
   "8453|rETH":"0xb6fe221fe9eef5aba221c348ba20a1bf5e73624c",
-  "137|MaticX":"0xfa68fb4628dff1028cfec22b4162fccd0d45efb6","137|WPOL":"0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-  "137|stMatic":"0x3a58a54c066fdc0f2d55fc9c89f0415c92ebf3c4","137|TruMATIC":"0xf33687811f3ad0cd6b48dd4b39f9f977bd7165a2",
   "42161|WETH":"0x82af49447d8a07e3bd95bd0d56f35241523fbab1","42161|wstETH":"0x5979d7b546e38e414f7e9822514be443a4800529",
   "42161|rETH":"0x35751007a407ca6feffe80b3cb397736d2cf4dbe","42161|ETH":"0x4186bfc76e2e237523cbc30fd220fe055156b41f",
   "42161|USDX":"0xec70dcb4a1efa46b8f2d97c310c9c4790ba5ffa8","42161|ezETH":"0x2416092f143378750bb29b79ed961ab195cceea5",
   "10|WETH":"0x4200000000000000000000000000000000000006","10|rETH":"0x9bcef72be871e61ed4fbbc7630889bee758eb81d",
   "10|wstETH":"0x1f32b1c2345538c0c6f582fcb022739c4a194ebb",
 };
-// chain_id mapping
-const CID={eth:"1",base:"8453",poly:"137",arb:"42161","m-eth":"1","m-op":"10","m-arb":"42161"};
+// chain_id mapping (for token rows -> chain id)
+const CID={eth:"1",base:"8453",arb:"42161","m-eth":"1","m-op":"10","m-arb":"42161"};
 
-async function fetchBalance(rpc,tokenAddr,walletAddr){
-  const sig="0x70a08231";const pad=walletAddr.replace("0x","").toLowerCase().padStart(64,"0");
-  const data=sig+pad;
-  try{const r=await fetch(rpc,{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({jsonrpc:"2.0",id:1,method:"eth_call",params:[{to:tokenAddr,data},"latest"]})});
-    const j=await r.json();if(j.result&&j.result!=="0x"){return parseInt(j.result,16)/1e18}return 0;
-  }catch{return null}
+// Try multiple RPCs in sequence; return null only if ALL fail (fail loudly per LESSONS-LEARNED)
+async function fetchBalance(rpcs,tokenAddr,walletAddr){
+  const data="0x70a08231"+walletAddr.replace("0x","").toLowerCase().padStart(64,"0");
+  for(const rpc of rpcs){
+    try{const r=await fetch(rpc,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({jsonrpc:"2.0",id:1,method:"eth_call",params:[{to:tokenAddr,data},"latest"]})});
+      const j=await r.json();
+      if(j.error)continue;
+      if(j.result&&j.result!=="0x")return parseInt(j.result,16)/1e18;
+      if(j.result==="0x")return 0;
+    }catch{continue}
+  }
+  return null;
 }
 
 async function fetchAllBalances(){
   const results={};const tasks=[];
   for(const key of Object.keys(ALLOC)){
     const[cid,tokenAddr]=key.split("|");
-    const rpc=RPC[cid];const ms=MSIG[cid];
-    if(!rpc||!ms)continue;
-    tasks.push(fetchBalance(rpc,tokenAddr,ms).then(bal=>{results[key]=bal}));
+    const rpcs=RPC[cid];const ms=MSIG[cid];
+    if(!rpcs||!ms)continue;
+    tasks.push(fetchBalance(rpcs,tokenAddr,ms).then(bal=>{results[key]=bal}));
   }
   await Promise.allSettled(tasks);return results;
 }
@@ -161,15 +166,15 @@ const App = function App(){
   const wcs=useMemo(()=>WH.map(ch=>{let tru=0,teu=0,tcu=0;
     const det=ch.tk.map(x=>{const net=x.g-(x.b||0);const cp=pr[x.t]?.usd||0;const cu=net*cp;
       const br=rt(x.t);const nib=net*br;tru+=x.ru||0;teu+=x.eu||0;tcu+=cu;
-      const liveNc=bals?computeNc("whitehat",ch.id,x.t,bals):null;
-      return{...x,net,nc:liveNc!=null?liveNc:x.nc,cpr:cp,cu,br,nib,ba:base(x.t)}});
+      const nc=bals?computeNc("whitehat",ch.id,x.t,bals):null;
+      return{...x,net,nc,cpr:cp,cu,br,nib,ba:base(x.t)}});
     const bg={};det.filter(x=>x.net>.0001).forEach(x=>{if(!bg[x.ba])bg[x.ba]=0;bg[x.ba]+=x.nib});
     return{...ch,det,tru,teu,tcu,bg}}),[pr,rt,bals]);
 
   const mcs=useMemo(()=>META.map(ch=>{let tcu=0;
     const det=ch.tk.map(x=>{const cp=pr[x.t]?.usd||0;const cu=x.a*cp;const br=rt(x.t);const nib=x.a*br;tcu+=cu;
-      const liveNc=bals?computeNc("meta",ch.id,x.t,bals):null;
-      return{...x,net:x.a,g:x.a,b:0,nc:liveNc!=null?liveNc:x.nc,cpr:cp,cu,br,nib,ba:"ETH"}});
+      const nc=bals?computeNc("meta",ch.id,x.t,bals):null;
+      return{...x,net:x.a,g:x.a,b:0,nc,cpr:cp,cu,br,nib,ba:"ETH"}});
     const bg={};det.forEach(x=>{if(!bg.ETH)bg.ETH=0;bg.ETH+=x.nib});
     return{...ch,det,tcu,bg}}),[pr,rt,bals]);
 
@@ -235,15 +240,15 @@ const App = function App(){
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,alignItems:"center"}}>
           <div>
             <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Rescued / Recovered</div>
-            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>$8.78M</div>
-            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>2,199 ETH across 5 chains</div>
-            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Whitehat recoveries ($4.67M at exploit prices) + Certora metastable rescue ($4.11M). Excluding StakeWise, Gnosis frozen, Hypernative-paused.</div>
+            <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>$5.35M</div>
+            <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>~1,340 ETH across 4 active chains</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Whitehat recoveries on Ethereum, Base, Arbitrum ($1.24M at exploit prices) + Certora metastable rescue ($4.11M). Polygon whitehat campaign ($3.12M) paused — restart pending. Excluding StakeWise, Gnosis frozen, Hypernative-paused.</div>
           </div>
           <div style={{textAlign:"right"}}>
             <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Claimed by LPs</div>
             <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>{balsLd||globalPct==null?"···":(globalPct*100).toFixed(1)+"%"}</div>
             <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>{balsLd?"Loading on-chain data...":"Live via RPC balanceOf"}</div>
-            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>CSV allocations minus current DAO multisig balances via public RPC endpoints across all 5 chains.</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>CSV allocations minus current DAO multisig balances via public RPC endpoints. Polygon temporarily excluded — campaign restart pending.</div>
             <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",marginTop:10,padding:"8px 20px",background:T.ac,color:"#fff",borderRadius:8,textDecoration:"none",fontWeight:700,fontSize:13}}>Claim at balancer.fi/portfolio</a>
           </div>
         </div>
