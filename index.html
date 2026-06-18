@@ -26,6 +26,15 @@ const ETH_G=["WETH","wstETH","weETH","rETH","osETH","ezETH","StaFi rETH","rsETH"
 const USD_G=["USDX","sUSDX"];
 const base=t=>ETH_G.includes(t)?"ETH":USD_G.includes(t)?"USDC":"USD";
 
+// --- Fixed ETH rates for global % weighting (frozen, not live) ---
+const ETH_RATE={
+  "WETH":1,"wstETH":1.18,"weETH":1.05,"rETH":1.11,"osETH":1.03,"ezETH":1.04,
+  "StaFi rETH":1,"rsETH":1.04,"sfrxETH":1.05,"ETHx":1.02,"ankrETH":1,
+  "USDX":0.00025,"sUSDX":0.000265, // ~$1 / ~$4000 ETH — negligible weight
+};
+// Reverse lookup: token contract address -> symbol (for globalPct)
+const ADDR_SYM={};
+
 // --- CoinGecko IDs (generated from CSV token set) ---
 const CG={WETH:"ethereum",wstETH:"wrapped-steth",weETH:"wrapped-eeth",rETH:"rocket-pool-eth",
   osETH:"stakewise-staked-eth",ezETH:"renzo-restaked-eth","StaFi rETH":"stafi",
@@ -141,6 +150,8 @@ const TC={
   "42161|ankrETH":"0xe05a08226c49b636acf99c40da8dc6af83ce5bb3",
 };
 const CID={eth:"1",base:"8453",arb:"42161","m-eth":"1","m-op":"10","m-arb":"42161"};
+// Build reverse lookup: "chainId|addr" -> symbol
+for(const[k,v]of Object.entries(TC)){const[cid,sym]=k.split("|");ADDR_SYM[`${cid}|${v}`]=sym;}
 
 // --- Wallet search CSV URLs (issue #1) ---
 const WH_CSV_URL="https://raw.githubusercontent.com/maxyz-xyz/balancer-upscale-exploit-shares/main/output/shares_whitehats_filtered.csv";
@@ -257,10 +268,18 @@ const App = function App(){
   const whNow=useMemo(()=>wcs.reduce((s,c)=>s+c.tcu,0),[wcs]);
   const metaNow=useMemo(()=>mcs.reduce((s,c)=>s+c.tcu,0),[mcs]);
 
+  // Global % claimed, weighted by ETH value (not raw token units)
   const globalPct=useMemo(()=>{
     if(!bals)return null;let tA=0,tR=0;
-    for(const key of Object.keys(ALLOC)){const c=ALLOC[key][0];tA+=c;
-      const b=bals[key];tR+=(b!=null&&b>=0?Math.min(b,c):c)}
+    for(const key of Object.keys(ALLOC)){
+      const c=ALLOC[key][0];
+      const sym=ADDR_SYM[key]||"";
+      const rate=ETH_RATE[sym]||0;
+      const ethAlloc=c*rate;
+      tA+=ethAlloc;
+      const b=bals[key];
+      tR+=((b!=null&&b>=0?Math.min(b,c):c)*rate);
+    }
     const claimed=Math.max(0,tA-tR);return tA>0?claimed/tA:0;
   },[bals]);
 
@@ -284,6 +303,8 @@ const App = function App(){
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,color:T.tx2}}>{x.eu?$$(x.eu):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10}}>{x.ru?$$(x.ru):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.gn}}>{prFail?"n/a":$$(x.cu)}</td>
+    <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.tx}}>
+      {prFail||balsLd?"···":x.nc!=null?$$(x.cu*x.nc):"---"}</td>
     <td style={{textAlign:"right",padding:"6px",fontFamily:mn,fontSize:10,fontWeight:600,color:T.tx}}>
       {balsLd?"···":x.nc!=null?`${(x.nc*100).toFixed(1)}%`:"---"}</td>
   </tr>);
@@ -317,7 +338,7 @@ const App = function App(){
             <div style={{...Lb,color:T.ac,marginBottom:8}}>Total Funds Claimed by LPs</div>
             <div style={{fontSize:32,fontWeight:800,fontFamily:mn,letterSpacing:-1}}>{balsLd||globalPct==null?"···":(globalPct*100).toFixed(1)+"%"}</div>
             <div style={{fontSize:13,color:T.tx2,fontFamily:mn,marginTop:4}}>{balsLd?"Loading on-chain data...":"Live via RPC balanceOf"}</div>
-            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>Hardcoded CSV allocations vs live DAO multisig balances via public RPC. Combined token-level (not per-campaign).</div>
+            <div style={{fontSize:10,color:T.tx2,marginTop:6,lineHeight:1.5}}>ETH-weighted: each token converted to ETH at fixed rates, then summed. Per-token % in breakdown is in-kind (no USD dependency).</div>
             <a href="https://balancer.fi/portfolio" target="_blank" rel="noopener noreferrer" style={{display:"inline-block",marginTop:10,padding:"8px 20px",background:T.ac,color:"#fff",borderRadius:8,textDecoration:"none",fontWeight:700,fontSize:13}}>Claim at balancer.fi/portfolio</a>
           </div>
         </div>
@@ -346,7 +367,7 @@ const App = function App(){
               <span style={{color:T.tx2,fontSize:12,transition:"transform .2s",transform:isE?"rotate(180deg)":"none"}}>&#9662;</span></div></div>
             {isE&&(<div style={{padding:"0 16px 14px",borderTop:`1px solid ${T.bd}`}}><div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",marginTop:10}}><thead><tr style={{fontSize:8,color:T.tx2,textTransform:"uppercase",letterSpacing:.5}}>
-                {["Token","Gross","Bounty","Net for LPs","Base","$ Exploit","$ Recovery","$ Now","% Unclaimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
+                {["Token","Gross","Bounty","Net for LPs","Base","$ Exploit","$ Recovery","$ Now","$ Remaining","% Unclaimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
                 <tbody>{ch.det.map((x,i)=><TRow key={i} x={x}/>)}</tbody></table></div>
               {ch.ms&&<div style={{marginTop:10,padding:"6px 10px",background:T.bg3,borderRadius:5,fontSize:9}}><span style={{color:T.tx2}}>DAO Multisig: </span><a href={`https://${ch.ex}/address/${ch.ms}`} target="_blank" rel="noopener noreferrer" style={{color:T.ac,textDecoration:"none",fontFamily:mn,fontSize:9}}>{ch.ms}</a></div>}
             </div>)}</div>)})}</div>
@@ -375,7 +396,7 @@ const App = function App(){
               <span style={{color:T.tx2,fontSize:12,transition:"transform .2s",transform:isE?"rotate(180deg)":"none"}}>&#9662;</span></div></div>
             {isE&&(<div style={{padding:"0 16px 14px",borderTop:`1px solid ${T.bd}`}}><div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",marginTop:10}}><thead><tr style={{fontSize:8,color:T.tx2,textTransform:"uppercase",letterSpacing:.5}}>
-                {["Token","Gross","Bounty","Net for LPs","In ETH","$ Rescue","$ Recovery","$ Now","% Unclaimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
+                {["Token","Gross","Bounty","Net for LPs","In ETH","$ Rescue","$ Recovery","$ Now","$ Remaining","% Unclaimed"].map(h=><th key={h} style={{textAlign:h==="Token"?"left":"right",padding:"5px 6px",fontWeight:600}}>{h}</th>)}</tr></thead>
                 <tbody>{ch.det.map((x,i)=><TRow key={i} x={x} showBounty={false}/>)}</tbody></table></div>
               <div style={{marginTop:10,padding:"6px 10px",background:T.bg3,borderRadius:5,fontSize:9,display:"flex",flexWrap:"wrap",gap:6,justifyContent:"space-between"}}>
                 <span><span style={{color:T.tx2}}>Multisig: </span><a href={`https://${ch.ex}/address/${ch.ms}`} target="_blank" rel="noopener noreferrer" style={{color:T.ac,textDecoration:"none",fontFamily:mn,fontSize:9}}>{ch.ms}</a></span>
